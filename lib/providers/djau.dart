@@ -8,7 +8,6 @@ import 'package:cendrassos/services/storage.dart';
 import 'package:flutter/material.dart';
 
 import '../api/exceptions.dart';
-import '../models/qr.dart';
 
 class LoginResult {
   DjauStatus isLogged;
@@ -36,30 +35,6 @@ class DjauModel with ChangeNotifier {
   bool isLogged() => _isLogged == DjauStatus.loaded;
   bool isError() => _isLogged == DjauStatus.error;
 
-  /// Registra un nou alumne amb el "sistema Cendrassos".
-  /// Hi ha el contingut d'un codi Qr [qr] i la data de
-  /// naixement [born]. Retorna el resultat de l'intent
-  Future<LoginResult> register(Qr qr, String born) async {
-    try {
-      final resultat = await _repository.sendQr(CredentialsQuery(qr.key, born));
-      _isLogged = DjauStatus.disabled;
-      errorMessage = "";
-      errorType = "";
-      alumne = Alumne.fromCredentials(qr.getFullName(), resultat);
-      await _storage.saveAlumne(alumne);
-      await _prefs.addAlumneToList(resultat.username);
-    } on AppException catch (f) {
-      _isLogged = DjauStatus.error;
-      errorType = f.prefix();
-      errorMessage = f.message();
-    } catch (e) {
-      _isLogged = DjauStatus.error;
-      errorType = "ERROR";
-      errorMessage = e.toString();
-    }
-    notifyListeners();
-    return LoginResult(_isLogged, errorType, errorMessage);
-  }
 
   /// Entrar en el sistema a través d'usuari [username] i
   /// contrasenya [password]. Es fa servir quan s'intenta fer login contra

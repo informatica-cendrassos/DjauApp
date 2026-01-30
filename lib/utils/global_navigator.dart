@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cendrassos/djau_theme.dart';
-import 'package:cendrassos/screens/register_page.dart';
 import 'package:cendrassos/screens/sortida_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +14,7 @@ import '../screens/login_page.dart';
 
 class GlobalNavigator {
   static gotoNewAlumne() {
-    if (Platform.isAndroid || Platform.isIOS) {
-      // Sistemes mòbils
-      gotoRegister();
-    } else {
-      // Escriptori
       gotoLogin();
-    }
   }
 
   static gotoNewAlumneWithPop() {
@@ -29,7 +22,7 @@ class GlobalNavigator {
     Navigator.of(context).popUntil((route) => route.isFirst);
     if (Platform.isAndroid || Platform.isIOS) {
       // Sistemes mòbils
-      Navigator.of(context).pushNamed(RegisterPage.routeName);
+      Navigator.of(context).pushNamed(LoginPage.routeName);
     } else {
       // Escriptori
       Navigator.of(context).pushNamed(LoginPage.routeName);
@@ -39,11 +32,6 @@ class GlobalNavigator {
   static gotoLogin() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).pushNamed(LoginPage.routeName);
-  }
-
-  static gotoRegister() {
-    var context = navigatorKey.currentContext!;
-    Navigator.of(context).pushNamed(RegisterPage.routeName);
   }
 
   static gotoAlumne(context, String username) async {

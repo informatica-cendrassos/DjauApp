@@ -56,6 +56,8 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  await _configureLocalTimeZone();
+
   // Necessari per Android 13 i posteriors
   // https://developer.android.com/develop/ui/views/notifications/notification-permission
   await Permission.notification.isDenied.then((value) {
@@ -64,7 +66,6 @@ Future<void> main() async {
     }
   });
 
-  await _configureLocalTimeZone();
 
   initializeDateFormatting().then((_) => {Routes(initialRoute: initialRoute)});
 
