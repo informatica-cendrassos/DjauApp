@@ -20,13 +20,7 @@ class GlobalNavigator {
   static gotoNewAlumneWithPop() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).popUntil((route) => route.isFirst);
-    if (Platform.isAndroid || Platform.isIOS) {
-      // Sistemes mòbils
       Navigator.of(context).pushNamed(LoginPage.routeName);
-    } else {
-      // Escriptori
-      Navigator.of(context).pushNamed(LoginPage.routeName);
-    }
   }
 
   static gotoLogin() {

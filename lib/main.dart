@@ -47,6 +47,9 @@ Future<void> _configureLocalTimeZone() async {
     return;
   }
   tz.initializeTimeZones();
+  if (Platform.isWindows) {
+    return;
+  }
   final timezoneInfo = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timezoneInfo.toString()));
 }
@@ -58,14 +61,15 @@ Future<void> main() async {
 
   await _configureLocalTimeZone();
 
-  // Necessari per Android 13 i posteriors
-  // https://developer.android.com/develop/ui/views/notifications/notification-permission
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
-
+  if (Platform.isAndroid) {
+    // Necessari per Android 13 i posteriors
+    // https://developer.android.com/develop/ui/views/notifications/notification-permission
+    await Permission.notification.isDenied.then((value) {
+      if (value) {
+        Permission.notification.request();
+      }
+    });
+  }
 
   initializeDateFormatting().then((_) => {Routes(initialRoute: initialRoute)});
 
