@@ -9,9 +9,9 @@ class NotificacioDialog extends StatelessWidget {
   static const routeName = '/notificacio';
 
   const NotificacioDialog({
-    Key? key,
+    super.key,
     required this.notificacio,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

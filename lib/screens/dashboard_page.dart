@@ -25,8 +25,8 @@ class Dashboard extends StatefulWidget {
   static const routeName = '/dashboard';
 
   const Dashboard({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<Dashboard> createState() => _DashBoardState();

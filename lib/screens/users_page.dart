@@ -19,7 +19,7 @@ class UsersPage extends StatelessWidget {
   final ValueNotifier<Map<String, String>> _users =
       ValueNotifier<Map<String, String>>({});
 
-  UsersPage({Key? key}) : super(key: key);
+  UsersPage({super.key});
 
   void loadData(BuildContext context) async {
     final djau = Provider.of<DjauModel>(context, listen: false);

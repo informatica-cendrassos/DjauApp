@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 class LoadingPage extends StatefulWidget {
   static const routeName = '/loading';
 
-  const LoadingPage({Key? key}) : super(key: key);
+  const LoadingPage({super.key});
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
@@ -42,8 +42,6 @@ class _LoadingPageState extends State<LoadingPage> {
     var djau = Provider.of<DjauModel>(context, listen: false);
     // Comprovar si tots els alumnes poden fer login:
     // - Si: Carregar el darrer alumne i mirar si pot fer login
-    // - No hi ha dades: scanqr_page
-    // - Alguns: users_page
     var desti = await djau.determineInitialPage();
 
     if (djau.isError()) {
@@ -58,14 +56,15 @@ class _LoadingPageState extends State<LoadingPage> {
     switch (desti) {
       case 0: // No hi ha alumnes, demanar registre
         GlobalNavigator.gotoNewAlumneWithPop();
-        break;
-      case 1: // Hi ha alumnes sense confirmar
-        GlobalNavigator.forgetAndGo(UsersPage.routeName);
-        break;
-      case 2: // Tots els alumnes estan confirmats
+        break; 
+      case 1: // Hi ha alumnes. S'ha de mirar si pot entrar l'alumne per defecte
         await djau.loadDefaultAlumne();
         if (djau.isLogged()) {
           initialRoute = Dashboard.routeName;
+        } else {
+          // L'alumne per defecte no ha pogut entrar
+          // anar a la llista d'alumnes
+          initialRoute = UsersPage.routeName;
         }
         GlobalNavigator.forgetAndGo(initialRoute);
         break;

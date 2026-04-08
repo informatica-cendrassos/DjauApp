@@ -8,12 +8,11 @@ class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? gotoSortides;
 
   const AppMenuBar(
-      {Key? key,
+      {super.key,
       required this.nom,
       required this.haveleading,
       required this.gotoUserPage,
-      required this.gotoSortides})
-      : super(key: key);
+      required this.gotoSortides});
 
   @override
   Widget build(BuildContext context) {

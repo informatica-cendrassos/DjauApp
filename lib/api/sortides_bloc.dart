@@ -26,7 +26,7 @@ class SortidesBlock {
     fetchSortides();
   }
 
-  fetchSortides() async {
+  Future<void> fetchSortides() async {
     resumSortidaListSink
         .add(ApiResponse.loading(carregantSortides, []));
     try {
@@ -38,7 +38,7 @@ class SortidesBlock {
     }
   }
 
-  dispose() {
+  void dispose() {
     _resumSortidaListController.close();
   }
 

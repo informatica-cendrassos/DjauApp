@@ -25,7 +25,7 @@ class NotificacioBloc {
     fetchNotificacions(DateTime.now().month);
   }
 
-  fetchNotificacions(int mes) async {
+  Future<void> fetchNotificacions(int mes) async {
     notificationsListSink
         .add(ApiResponse.loading('Recuperant notificacions', []));
     try {
@@ -37,7 +37,7 @@ class NotificacioBloc {
     }
   }
 
-  dispose() {
+  void dispose() {
     _notificacioListController.close();
   }
 

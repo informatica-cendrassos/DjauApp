@@ -1,4 +1,3 @@
-import 'package:cendrassos/api/credentials_query.dart';
 import 'package:cendrassos/api/notificacions_repository.dart';
 import 'package:cendrassos/models/alumne.dart';
 import 'package:cendrassos/models/perfil.dart';
@@ -97,19 +96,12 @@ class DjauModel with ChangeNotifier {
   }
 
   /// Defineix quina és la pantalla inicial en iniciar el programa
-  /// - No hi ha alumnes -> Login/QR (0)
-  /// - Hi ha alumnes però No ha entrat mai -> Pantalla d'alumnes (1)
-  /// - Hi ha alumnes i han entrat -> Directe al Dashboard (2)
+  /// - No hi ha alumnes -> Login (0)
+  /// - Hi ha alumnes (1) -> Carregar l'últim alumne 
   Future<int> determineInitialPage() async {
     var alumnes = await _prefs.getAlumnesList();
     if (alumnes.isEmpty) return 0;
-
-    // S1 l'alumne ja havia entrat algun cop
-    var lastlogin = await _prefs.getLastLogin();
-    if (lastlogin == null || lastlogin.isEmpty) {
-      return 1;
-    }
-    return 2;
+    return 1;
   }
 
   /// Carrega l'alumne que havia entrat per darrera vegada.

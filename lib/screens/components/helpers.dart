@@ -9,12 +9,11 @@ class ErrorRetry extends StatelessWidget {
   final VoidCallback onRetryPressed;
 
   const ErrorRetry(
-      {Key? key,
+      {super.key,
       required this.errorType,
       required this.errorMessage,
       required this.textBoto,
-      required this.onRetryPressed})
-      : super(key: key);
+      required this.onRetryPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +66,11 @@ class ErrorRetryLogin extends StatelessWidget {
   final VoidCallback onLogin;
 
   const ErrorRetryLogin(
-      {Key? key,
+      {super.key,
       required this.errorType,
       required this.errorMessage,
       required this.onRetryPressed,
-      required this.onLogin})
-      : super(key: key);
+      required this.onLogin});
 
   Widget _boto(context, String text, VoidCallback metode) {
     return ElevatedButton(
@@ -124,7 +122,7 @@ class ErrorRetryLogin extends StatelessWidget {
 class Loading extends StatelessWidget {
   final String loadingMessage;
 
-  const Loading({Key? key, required this.loadingMessage}) : super(key: key);
+  const Loading({super.key, required this.loadingMessage});
 
   @override
   Widget build(BuildContext context) {

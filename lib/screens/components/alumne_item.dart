@@ -8,12 +8,11 @@ typedef TryLoginCallBack = void Function(BuildContext context, String username);
 
 class AlumneItem extends StatelessWidget {
   const AlumneItem(
-      {Key? key,
+      {super.key,
       required this.username,
       required this.nom,
       required this.enabled,
-      required this.tryToGotoDashboard})
-      : super(key: key);
+      required this.tryToGotoDashboard});
 
   final String username;
   final String nom;

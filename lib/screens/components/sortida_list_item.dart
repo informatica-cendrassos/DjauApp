@@ -6,10 +6,10 @@ typedef TryShowDetail = void Function(BuildContext context, int id);
 
 class SortidaListItem extends StatelessWidget {
   const SortidaListItem({
-    Key? key,
+    super.key,
     required this.sortida,
     required this.showDetail,
-  }) : super(key: key);
+  });
 
   final ResumSortida sortida;
   final TryShowDetail showDetail;

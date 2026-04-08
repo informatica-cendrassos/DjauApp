@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class SortidesPage extends StatefulWidget {
   static const routeName = '/sortides';
-  const SortidesPage({Key? key}) : super(key: key);
+  const SortidesPage({super.key});
 
   @override
   State<SortidesPage> createState() => _SortidesPageState();

@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class SortidaDetailPage extends StatelessWidget {
   final int id;
-  const SortidaDetailPage({Key? key, this.id = 0}) : super(key: key);
+  const SortidaDetailPage({super.key, this.id = 0});
 
   static const routeName = '/sortida';
 
@@ -118,9 +118,9 @@ class SortidaDetailPage extends StatelessWidget {
 
 class SortidaDescription extends StatelessWidget {
   const SortidaDescription({
-    Key? key,
+    super.key,
     required this.sortida,
-  }) : super(key: key);
+  });
 
   final Sortida sortida;
 

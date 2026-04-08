@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class ProfilePage extends StatelessWidget {
   static const routeName = '/profile';
 
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   Widget responsableColumn(context, String nom, String email, String telefon) {
     return Column(

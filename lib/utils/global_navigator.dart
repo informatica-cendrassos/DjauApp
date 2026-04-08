@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cendrassos/djau_theme.dart';
 import 'package:cendrassos/screens/sortida_detail_page.dart';
 import 'package:flutter/material.dart';
@@ -13,32 +11,32 @@ import '../screens/dashboard_page.dart';
 import '../screens/login_page.dart';
 
 class GlobalNavigator {
-  static gotoNewAlumne() {
+  static void gotoNewAlumne() {
       gotoLogin();
   }
 
-  static gotoNewAlumneWithPop() {
+  static void gotoNewAlumneWithPop() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).popUntil((route) => route.isFirst);
       Navigator.of(context).pushNamed(LoginPage.routeName);
   }
 
-  static gotoLogin() {
+  static void gotoLogin() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).pushNamed(LoginPage.routeName);
   }
 
-  static gotoAlumne(context, String username) async {
+  static Future<void> gotoAlumne(context, String username) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
     await djau.loadAlumne(username);
     GlobalNavigator.go(Dashboard.routeName);
   }
 
-  static gotoSortidaDetail(context, int id) async {
+  static Future<void> gotoSortidaDetail(context, int id) async {
       GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
   }
 
-  static forgetAndGo(String initialRoute) =>
+  static Future<Object?> forgetAndGo(String initialRoute) =>
       Navigator.popAndPushNamed(navigatorKey.currentContext!, initialRoute);
 
   static void goBack() {
@@ -54,17 +52,17 @@ class GlobalNavigator {
         result: value);
   }
 
-  static go(String route) =>
+  static Future<Object?> go(String route) =>
       Navigator.pushNamed(navigatorKey.currentContext!, route);
 
-  static goToId(String route, int id) =>
+  static Future<Object?> goToId(String route, int id) =>
       Navigator.pushNamed(
         navigatorKey.currentContext!, 
         route,
         arguments: { 'id': id}, 
       );
 
-  static showAlertDialog(String detail) {
+  static void showAlertDialog(String detail) {
     showDialog(
       barrierDismissible: false,
       context: navigatorKey.currentContext!,
@@ -84,7 +82,7 @@ class GlobalNavigator {
     );
   }
 
-  static showAlertDialogAndGo(String detail, VoidCallback method) {
+  static void showAlertDialogAndGo(String detail, VoidCallback method) {
     showDialog(
       barrierDismissible: false,
       context: navigatorKey.currentContext!,
@@ -102,7 +100,7 @@ class GlobalNavigator {
     );
   }
 
-  static showNotificacio(Notificacio notificacio) {
+  static void showNotificacio(Notificacio notificacio) {
     showDialog(
       barrierDismissible: false,
       context: navigatorKey.currentContext!,
@@ -112,7 +110,7 @@ class GlobalNavigator {
     );
   }
 
-  static showAlertPopup(String title, String detail) async {
+  static Future<void> showAlertPopup(String title, String detail) async {
     void showDemoDialog<T>(
         {required BuildContext context, required Widget child}) {
       showDialog<T>(

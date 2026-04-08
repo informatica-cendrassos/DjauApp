@@ -22,7 +22,7 @@ class CalendariNotificacions extends StatelessWidget {
       ValueNotifier<List<Notificacio>>([]);
 
   CalendariNotificacions({
-    Key? key,
+    super.key,
     required this.notificacions,
     required this.focusedDay,
     required this.selectedDay,
@@ -32,7 +32,7 @@ class CalendariNotificacions extends StatelessWidget {
     required this.onMonthChange,
     required this.onSelectDay,
     required this.onFormatChanged,
-  }) : super(key: key);
+  });
 
   List<Notificacio> _getEventsForDay(DateTime day) {
     return notificacions.where((n) => DateUtils.isSameDay(n.dia, day)).toList();
@@ -182,8 +182,7 @@ typedef MonthChangeCallBack = void Function(DateTime focused);
 typedef FormatChanged = void Function(CalendarFormat format);
 
 class CalendarListItem extends StatelessWidget {
-  const CalendarListItem({Key? key, required this.notificacio})
-      : super(key: key);
+  const CalendarListItem({super.key, required this.notificacio});
 
   final Notificacio notificacio;
 
