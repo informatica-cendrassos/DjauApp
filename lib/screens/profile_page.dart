@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
 
   const ProfilePage({super.key});
 
-  Widget responsableColumn(context, String nom, String email, String telefon) {
+  Widget responsableColumn(BuildContext context, String nom, String email, String telefon) {
     return Column(
       children: [
         Text(
@@ -47,7 +47,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget showData(context, Perfil dades) {
+  Widget showData(BuildContext context, Perfil dades) {
     return Column(
       children: <Widget>[
         Stack(

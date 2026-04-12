@@ -1,76 +1,50 @@
-import 'package:cendrassos/api/credentials_response.dart';
-import 'package:intl/intl.dart';
-
 class Alumne {
-  final String username;
-  final String password;
+  final int id;
   final String nom;
-  String token;
-  late String lastSyncDate;
-
-  static DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+  final String cognoms;
 
   // Personalitzar els camps de login
-  static String usernameField = 'username';
-  static String passwordField = 'password';
+  static const String idField = 'id';
   static String nomField = 'nom';
-  static String tokenField = 'token';
-  static String lastSyncDateField = "last_sync_date";
+  static String cognomsField = 'cognoms';
 
   Alumne(
-    this.username,
-    this.password,
+    this.id,
     this.nom,
-    this.token,
-    this.lastSyncDate,
+    this.cognoms,
   );
 
-  Alumne.fromCredentials(String nomAlumne, CredentialsResponse c)
-      : username = c.username,
-        password = c.password,
-        nom = nomAlumne,
-        token = "" {
-    lastSyncDate = formatter.format(DateTime.now());
-  }
-
-  void updateLastSyncDate() {
-    lastSyncDate = formatter.format(DateTime.now());
+  String nomComplet() {
+    return "$nom $cognoms";
   }
 
   @override
-  int get hashCode => token.hashCode;
+  bool operator ==(Object other) => other is Alumne && other.id == id;
 
   @override
-  bool operator ==(Object other) =>
-      other is Alumne && other.username == username;
+  int get hashCode => id.hashCode;
 
   factory Alumne.fromJson(dynamic json) {
     return Alumne(
-      json[usernameField] as String,
-      json[passwordField] as String,
+      json[idField] as int,
       json[nomField] as String,
-      json[tokenField] as String,
-      json[lastSyncDateField] as String,
+      json[cognomsField] as String,
     );
   }
 
   factory Alumne.fromPartialJson(dynamic json, String password, String token) {
     return Alumne(
-      json[usernameField] as String,
-      password,
+      json[idField] as int,
       json[nomField] as String,
-      token,
-      formatter.format(DateTime.now()),
+      json[cognomsField] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data[usernameField] = username;
-    data[passwordField] = password;
-    data[tokenField] = token;
+    data[idField] = id;
     data[nomField] = nom;
-    data[lastSyncDateField] = lastSyncDate;
+    data[cognomsField] = cognoms;
     return data;
   }
 }

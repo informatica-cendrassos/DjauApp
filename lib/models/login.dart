@@ -1,27 +1,27 @@
 // @JsonSerializable()
 
 class Login {
-  String alumne = "";
+  String username = "";
   String contrasenya = "";
 
-  static String alumneField = 'username';
+  static String usernameField = 'username';
   static String passwordField = 'password';
 
-  Login(this.alumne, this.contrasenya);
+  Login(this.username, this.contrasenya);
 
   factory Login.fromJson(dynamic json) {
-    return Login(json[alumneField] as String, json[passwordField] as String);
+    return Login(json[usernameField] as String, json[passwordField] as String);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data[alumneField] = alumne;
+    data[usernameField] = username;
     data[passwordField] = contrasenya;
     return data;
   }
 
   @override
   toString() {
-    return '{ $alumne, $contrasenya }';
+    return '{ $username, $contrasenya }';
   }
 }

@@ -26,13 +26,17 @@ class GlobalNavigator {
     Navigator.of(context).pushNamed(LoginPage.routeName);
   }
 
-  static Future<void> gotoAlumne(context, String username) async {
+  static Future<void> gotoAlumne(BuildContext context, int id) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    await djau.loadAlumne(username);
-    GlobalNavigator.go(Dashboard.routeName);
+    var success =await djau.loadAlumne(id);
+    if (success.isLogged == DjauStatus.loaded) {
+      GlobalNavigator.go(Dashboard.routeName);
+    } else {
+      GlobalNavigator.showAlertDialog("No s'ha pogut carregar l'alumne ${djau.alumne.nomComplet()}");
+    }
   }
 
-  static Future<void> gotoSortidaDetail(context, int id) async {
+  static Future<void> gotoSortidaDetail(BuildContext context, int id) async {
       GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
   }
 

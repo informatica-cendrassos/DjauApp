@@ -72,7 +72,7 @@ class ErrorRetryLogin extends StatelessWidget {
       required this.onRetryPressed,
       required this.onLogin});
 
-  Widget _boto(context, String text, VoidCallback metode) {
+  Widget _boto(BuildContext context, String text, VoidCallback metode) {
     return ElevatedButton(
       onPressed: metode,
       child: Text(
@@ -146,13 +146,13 @@ class Loading extends StatelessWidget {
   }
 }
 
-String convertirDataPeninsular(context, String textData) {
+String convertirDataPeninsular(BuildContext context, String textData) {
   var data = DateFormat("dd/mm/yyyy hh:mm").parse(textData);
 
   return " ${DateFormat('d MMMM hh:mm', Localizations.localeOf(context).toString()).format(data)}";
 }
 
-String convertirDataAmerica(context, String textData) {
+String convertirDataAmerica(BuildContext context, String textData) {
   var data = DateFormat("yyyy-mm-d hh:mm").parse(textData);
 
   return " ${DateFormat('d MMMM hh:mm', Localizations.localeOf(context).toString()).format(data)}";

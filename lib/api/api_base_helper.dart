@@ -10,7 +10,7 @@ import 'dart:async';
 import 'package:http/retry.dart';
 
 class ApiBaseHelper {
-  static Uri createUrl(urlpath) {
+  static Uri createUrl(String urlpath) {
     return Uri.parse("$baseUrl$urlpath$endBaseUrl");
   }
 

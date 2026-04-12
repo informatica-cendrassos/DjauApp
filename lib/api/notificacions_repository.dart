@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cendrassos/api/credentials_query.dart';
 import 'package:cendrassos/api/login_response.dart';
 import 'package:cendrassos/api/news_query.dart';
 import 'package:cendrassos/api/news_response.dart';
@@ -15,7 +14,6 @@ import '../models/alumne.dart';
 import '../models/login.dart';
 import 'api_base_helper.dart';
 import '../models/notificacio.dart';
-import 'credentials_response.dart';
 
 class NotificacionsRepository {
   late final ApiBaseHelper _helper;
@@ -35,6 +33,9 @@ class NotificacionsRepository {
   static Login? lastLogin;
   static String currentToken = "";
 
+
+  // Crida al login per obtenir el token, que després es pot usar per a les altres crides
+  // ------------------------------------------------------
   Future<LoginResponse> login(Login dades) async {
     var url = pathLogin;
     Map<String, String> requestHeaders = {
@@ -49,6 +50,8 @@ class NotificacionsRepository {
     return LoginResponse.fromJson(response);
   }
 
+  // Refresh del token, que es fa quan el client rep un 401, i que després es pot usar per a les altres crides
+  // ------------------------------------------------------
   Future<LoginResponse> refreshTokenMethod() async {
     debugPrint('Relogin');
 
@@ -57,19 +60,19 @@ class NotificacionsRepository {
     return response;
   }
 
-  Future<CredentialsResponse> sendQr(CredentialsQuery dades) async {
-    var url = qrToken;
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-    };
+  // Obtenir els alumnes associats a un tutor concret
+  // ------------------------------------------------------
+  Future<List<Alumne>> getAlumnesList() async {
+    var url = pathAlumnes;
 
-    final response = await _helper.post(url, dades.toJson(), requestHeaders);
-    return CredentialsResponse.fromJson(response);
+    final response = await _helper.get(url, getHeaders(currentToken));
+    return (response as List).map((e) => Alumne.fromJson(e)).toList();
   }
 
-  Future<List<Notificacio>> getNotifications(int mes) async {
-    var url = "$pathNotificacions/$mes";
+  // Obtenir les notificacions d'un mes concret
+  // ------------------------------------------------------
+  Future<List<Notificacio>> getNotifications(int mes, int idAlumne) async {
+    var url = "$pathNotificacions/$mes/$idAlumne";
 
     final response = await _helper.get(url, getHeaders(currentToken));
 
@@ -77,16 +80,14 @@ class NotificacionsRepository {
     return results.results;
   }
 
-  Future<bool> areNewNotifications(Alumne alumne) async {
-    var url = pathNews;
-    try {
-      // No pot confiar en el token perquè no pot saber quan de temps fa
-      // que no ha entrat
-      var entrar = await login(Login(alumne.username, alumne.password));
-
-      var query = NewsQuery(lastSyncDate: alumne.lastSyncDate).toJson();
+  // Comprovar si hi ha notificacions noves des de l'última sincronització
+  // ------------------------------------------------------
+  Future<bool> areNewNotifications(String token, Alumne alumne, String lastSyncDate) async {
+    var url = "$pathNews/${alumne.id}";
+    try {      
+      var query = NewsQuery(lastSyncDate: lastSyncDate).toJson();
       final response =
-          await _helper.post(url, query, getHeaders(entrar.accessToken));
+          await _helper.post(url, query, getHeaders(token));
       debugPrint("Result $response");
       return NewsResponse.fromJson(response).resultIs("Sí");
     } catch (e) {
@@ -103,8 +104,8 @@ class NotificacionsRepository {
 
 // Sortides
 
-  Future<List<ResumSortida>> getSortides() async {
-    var url = pathSortides;
+  Future<List<ResumSortida>> getSortides(int idAlumne) async {
+    var url = "$pathSortides/$idAlumne";
 
     final response = await _helper.get(url, getHeaders(currentToken));
 

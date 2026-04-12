@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 
 class SortidesBlock {
   String _token = "";
+  int _idAlumne = 0;
+
   NotificacionsRepository _notificacioRepository = NotificacionsRepository();
   StreamController<ApiResponse<List<ResumSortida>>> _resumSortidaListController =
       StreamController<ApiResponse<List<ResumSortida>>>();
@@ -18,7 +20,9 @@ class SortidesBlock {
   Stream<ApiResponse<List<ResumSortida>>> get resumSortidaListStream =>
       _resumSortidaListController.stream;
 
-  SortidesBlock() {
+  SortidesBlock(String token, int idAlumne) {
+    _token = token;
+    _idAlumne = idAlumne;
     _resumSortidaListController =
         StreamController<ApiResponse<List<ResumSortida>>>();
     _notificacioRepository = NotificacionsRepository();
@@ -27,10 +31,11 @@ class SortidesBlock {
   }
 
   Future<void> fetchSortides() async {
+    
     resumSortidaListSink
         .add(ApiResponse.loading(carregantSortides, []));
     try {
-      var dades = await _notificacioRepository.getSortides();
+      var dades = await _notificacioRepository.getSortides(_idAlumne);
       resumSortidaListSink.add(ApiResponse.completed(dades));
     } catch (e) {
       resumSortidaListSink.add(ApiResponse.error(e.toString(), []));

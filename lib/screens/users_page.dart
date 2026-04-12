@@ -16,25 +16,14 @@ const spaceAroundCells = 10.0;
 class UsersPage extends StatelessWidget {
   static const routeName = '/users';
 
-  final ValueNotifier<Map<String, String>> _users =
-      ValueNotifier<Map<String, String>>({});
+  final ValueNotifier<Map<int, String>> _users =
+      ValueNotifier<Map<int, String>>({});
 
   UsersPage({super.key});
 
   void loadData(BuildContext context) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
     _users.value = await djau.getAlumnes();
-  }
-
-  void _deleteAlumne(BuildContext context, String username) async {
-    _users.value.remove(username);
-    final djau = Provider.of<DjauModel>(context, listen: false);
-    await djau.deleteAlumne(username);
-    var usuaris = await djau.getAlumnes();
-    if (usuaris.isEmpty) {
-      // No hi ha cap alumne, torna al registre
-      GlobalNavigator.gotoNewAlumneWithPop();
-    }
   }
 
   void gotoNewAlumne() {
@@ -45,9 +34,9 @@ class UsersPage extends StatelessWidget {
     GlobalNavigator.forgetAndGo(SortidesPage.routeName);
   }
 
-  void _gotoDashboard(BuildContext context, String username) async {
+  void _gotoDashboard(BuildContext context, int idAlumne) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    var result = await djau.loadAlumne(username);
+    var result = await djau.loadAlumne(idAlumne);
     if (result.isLogged == DjauStatus.loaded) {
       // No sé si fer popuntil
       GlobalNavigator.go(Dashboard.routeName);
@@ -61,7 +50,7 @@ class UsersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentLogin = context.watch<DjauModel>();
     var nom = currentLogin.alumne.nom;
-    var currentusername = currentLogin.alumne.username;
+    var currentAlumneId = currentLogin.alumne.id;
 
     if (_users.value.isEmpty) {
       loadData(context);
@@ -85,14 +74,14 @@ class UsersPage extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
       ),
-      body: ValueListenableBuilder<Map<String, String>>(
+      body: ValueListenableBuilder<Map<int, String>>(
         valueListenable: _users,
         builder: (context, value, _) => value.isNotEmpty
             ? ListView.separated(
                 itemCount: _users.value.length,
                 itemBuilder: (context, index) {
-                  String username = _users.value.keys.elementAt(index);
-                  var nom = _users.value[username];
+                  int idAlumne = _users.value.keys.elementAt(index);
+                  var nom = _users.value[idAlumne];
 
                   return Dismissible(
                     direction: DismissDirection.endToStart,
@@ -104,16 +93,15 @@ class UsersPage extends StatelessWidget {
                         child: Icon(Icons.delete, color: Colors.white),
                       ),
                     ),
-                    key: Key(username),
+                    key: Key(idAlumne.toString()),
                     onDismissed: (direction) {
-                      _deleteAlumne(context, username);
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("$missatgeEliminant $nom")));
                     },
                     child: AlumneItem(
-                      username: username,
+                      id: idAlumne,
                       nom: nom ?? "...",
-                      enabled: username == currentusername,
+                      enabled: idAlumne == currentAlumneId,
                       tryToGotoDashboard: _gotoDashboard,
                     ),
                   );

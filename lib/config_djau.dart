@@ -46,7 +46,7 @@ const String missatgeCarregantDades = "Carregant dades";
 const String missatgeTornaAProvar = "Torna-ho a provar";
 const String missatgeTornaALogin = 'Entrar credencials de nou';
 const String missatgeOk = "D'acord";
-const String missatgeEliminant = "Eliminant";
+const String missatgeEliminant = "No es pot eliminar l'alumne. Contacteu amb el tutor si hi ha algun error";
 
 const String defaultErrorMessage = "ERROR";
 const String undefinedError = "Hi ha hagut un error indeterminat";
@@ -78,6 +78,8 @@ const String qrToken = "/api/token/capture_token_api";
 // API Login
 const String pathLogin = "/api-token-auth";
 const String tokenRefresh = "/api-token-refresh";
+
+const String pathAlumnes = "/api/token/alumnes_associats/";
 
 const String pathNotificacions = "/api/token/notificacions/mes";
 const String pathNews = "/api/token/notificacions/news";

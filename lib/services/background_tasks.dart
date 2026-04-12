@@ -1,4 +1,5 @@
 import 'package:cendrassos/api/notificacions_repository.dart';
+import 'package:cendrassos/models/login.dart';
 import 'package:cendrassos/services/notifications_manager.dart';
 import 'package:cendrassos/services/storage.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +12,19 @@ class BackgroundTask {
 
   Future<void> checkNewNotificacions(dynamic Function(String? p) goto) async {
     await manager.initNotificationManager(goto);
-    var alumnes = await prefs.getAlumnesList();
+    var tutor = await storage.loadCurrentTutor();
+    var entrar = await api.login(Login(tutor.username, tutor.password));
+
+    // Per cada alumne associat al tutor, comprovar si hi ha notificacions noves, i si n'hi ha, mostrar una notificació
+    var alumnes = await api.getAlumnesList(); // No sé si fer-ho o no
     for (var i = 0; i < alumnes.length; i++) {
-      var data = await storage.getAlumne(alumnes[i]);
-      if (await api.areNewNotifications(data)) {
+      
+      if (await api.areNewNotifications(entrar.accessToken, alumnes[i], tutor.lastSyncDate)) {
         debugPrint('[BackgroundFetch] $alumnes[i] Si');
-        await manager.showNotification(i, data.username, data.nom);
-        data.updateLastSyncDate();
-        await storage.saveAlumne(data);
+        await manager.showNotification(alumnes[i].id, alumnes[i].nomComplet());                
       }
     }
+    tutor.updateLastSyncDate();
+    await storage.saveTutor(tutor);
   }
 }

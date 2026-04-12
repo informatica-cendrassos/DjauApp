@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 typedef DeleteAlumneCallBack = void Function(
     BuildContext context, String username);
 
-typedef TryLoginCallBack = void Function(BuildContext context, String username);
+typedef TryLoginCallBack = void Function(BuildContext context, int idAlumne);
 
 class AlumneItem extends StatelessWidget {
   const AlumneItem(
       {super.key,
-      required this.username,
+      required this.id,
       required this.nom,
       required this.enabled,
       required this.tryToGotoDashboard});
 
-  final String username;
+  final int id;
   final String nom;
   final bool enabled;
   final TryLoginCallBack tryToGotoDashboard;
@@ -22,8 +22,8 @@ class AlumneItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () => tryToGotoDashboard(context, username),
-        child: alumneItemContent(context),
+      onTap: () => tryToGotoDashboard(context, id),
+      child: alumneItemContent(context),
     );
   }
 

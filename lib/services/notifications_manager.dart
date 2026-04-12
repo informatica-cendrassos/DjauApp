@@ -112,7 +112,7 @@ class NotificationManager {
   //     );
   // }
 
-  Future<void> showNotification(id, String username, String nom) async {
+  Future<void> showNotification(int idAlumne, String nom) async {
     var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
       channelId,
       appName,
@@ -126,11 +126,11 @@ class NotificationManager {
       iOS: iOSPlatformChannelSpecifics,
     );
     await flutterLocalNotificationsPlugin.show(
-      id: id,
+      id: idAlumne,
       title: nomInstitut,
       body: 'Notificacions al Djau de $nom',
       notificationDetails: platformChannelSpecifics,
-      payload: username,
+      payload: idAlumne.toString(),
     );
   }
 }

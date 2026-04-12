@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 // Colors
 
 var primaryColor = const Color.fromRGBO(217, 48, 29, 1);
@@ -14,29 +15,29 @@ var defaultColor = const Color(0x000000FF);
 
 Map<int, Color> _primaryColorMap = {
   050: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .1),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .1),
   100: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .2),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .2),
   200: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .3),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .3),
   300: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .4),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .4),
   400: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .5),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .5),
   500: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .6),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .6),
   600: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .7),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .7),
   700: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .8),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .8),
   800: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, .9),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .9),
   900: Color.fromRGBO(
-      primaryColor.red, primaryColor.green, primaryColor.blue, 1),
+      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), 1),
 };
 
 MaterialColor primarySwatch =
-    MaterialColor(primaryColor.value, _primaryColorMap);
+    MaterialColor(primaryColor.toARGB32(), _primaryColorMap);
 
 ColorScheme colorScheme = ColorScheme.fromSwatch(
   primarySwatch: primarySwatch,

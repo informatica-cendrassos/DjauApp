@@ -51,7 +51,7 @@ class CalendariNotificacions extends StatelessWidget {
 
   // Crea les caixes de colors de les notificacions de cada
   // un dels dies
-  Widget _notificationsBox(context, Color color, int lenght) {
+  Widget _notificationsBox(BuildContext context, Color color, int lenght) {
     return FittedBox(
       fit: BoxFit.fill,
       child: Container(

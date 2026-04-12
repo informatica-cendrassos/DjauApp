@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 class NotificacioBloc {
   String _token = "";
+  int _id = 0;
   NotificacionsRepository _notificacioRepository = NotificacionsRepository();
   StreamController<ApiResponse<List<Notificacio>>> _notificacioListController =
       StreamController<ApiResponse<List<Notificacio>>>();
@@ -17,11 +18,12 @@ class NotificacioBloc {
   Stream<ApiResponse<List<Notificacio>>> get notificationsListStream =>
       _notificacioListController.stream;
 
-  NotificacioBloc(String token) {
+  NotificacioBloc(String token, int id) {
     _notificacioListController =
         StreamController<ApiResponse<List<Notificacio>>>();
     _notificacioRepository = NotificacionsRepository();
     _token = token;
+    _id = id;
     fetchNotificacions(DateTime.now().month);
   }
 
@@ -29,7 +31,7 @@ class NotificacioBloc {
     notificationsListSink
         .add(ApiResponse.loading('Recuperant notificacions', []));
     try {
-      var dades = await _notificacioRepository.getNotifications(mes);
+      var dades = await _notificacioRepository.getNotifications(mes, _id);
       notificationsListSink.add(ApiResponse.completed(dades));
     } catch (e) {
       notificationsListSink.add(ApiResponse.error(e.toString(), []));

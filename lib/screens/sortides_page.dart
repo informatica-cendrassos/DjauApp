@@ -29,8 +29,8 @@ class _SortidesPageState extends State<SortidesPage> {
   @override
   void initState() {
     super.initState();
-//    final djau = Provider.of<DjauModel>(context, listen: false);
-    _bloc = SortidesBlock();
+    final djau = Provider.of<DjauModel>(context, listen: false);
+    _bloc = SortidesBlock(djau.tutor.token, djau.alumne.id);
   }
 
   @override
@@ -47,8 +47,8 @@ class _SortidesPageState extends State<SortidesPage> {
 
   FutureOr onGoBack(dynamic value) {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    if (_bloc.getToken() != djau.alumne.token) {
-      _bloc.setToken(djau.alumne.token);
+    if (_bloc.getToken() != djau.tutor.token) {
+      _bloc.setToken(djau.tutor.token);
       _retryComunicacion();
     }
   }

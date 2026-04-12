@@ -26,12 +26,12 @@ class FetchDataException extends AppException {
 }
 
 class BadRequestException extends AppException {
-  BadRequestException([message])
+  BadRequestException([String? message])
       : super(message, invalidPetitionExceptionMessage);
 }
 
 class UnauthorisedException extends AppException {
-  UnauthorisedException([message])
+  UnauthorisedException([String? message])
       : super(message, notAuthorizedExceptionMessage);
 }
 

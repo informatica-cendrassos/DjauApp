@@ -46,7 +46,7 @@ class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   VoidCallback? enableProfileButton(
-      context, String? currentRoute, Map<String, String> arguments) {
+      BuildContext context, String? currentRoute, Map<String, String> arguments) {
     if (currentRoute != ProfilePage.routeName) {
       return () => Navigator.of(context)
           .pushNamed(ProfilePage.routeName, arguments: arguments);
