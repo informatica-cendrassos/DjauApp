@@ -20,6 +20,8 @@ class Tutor {
     this.lastSyncDate,
   );
 
+  Tutor.fromNow(String username, String password, String token) : this(username, password, token, formatter.format(DateTime.now()));
+
   void updateLastSyncDate() {
     lastSyncDate = formatter.format(DateTime.now());
   }

@@ -38,7 +38,7 @@ class DjauSecureStorage {
     if (username != null) {
       return loadTutor(username);
     } else {
-      throw Exception("Not found");
+      return Tutor("","","", "");
     }
   }
 

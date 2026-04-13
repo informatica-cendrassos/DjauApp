@@ -39,17 +39,17 @@ class DjauModel with ChangeNotifier {
   bool isLogged() => _isLogged == DjauStatus.loaded;
   bool isError() => _isLogged == DjauStatus.error;
 
-
   /// Entrar en el sistema a través d'usuari [username] i
   /// contrasenya [password]. Es fa servir quan s'intenta fer login contra
   /// el servidor
   ///
-  /// Si tot va bé carrega la variable `alumne` i si no, posa l'estat en error
+  /// Si tot va bé carrega la variable `tutor` i si no, posa l'estat en error
   Future<LoginResult> login(String username, String password) async {
     try {
       final response = await _repository.login(Login(username, password));
-      tutor = await _storage.loadTutor(username);
-      tutor.token = response.accessToken;
+      // Crea les dades del tutor a partir de les credencials i el token que ens ha donat el servidor
+      tutor = Tutor.fromNow(username, password, response.accessToken);
+
       _isLogged = DjauStatus.loaded;
       errorMessage = "";
       errorType = "";
@@ -68,44 +68,46 @@ class DjauModel with ChangeNotifier {
     return LoginResult(_isLogged, errorType, errorMessage);
   }
 
-  /// Carrega la llista dels alumnes associats al tutor que ha entrat en el sistema. 
-  /// Es fa servir per carregar la variable `alumne` quan ja s'ha fet login i es vol 
-  /// carregar un altre alumne 
-  Future<LoginResult> loadAlumne(int id) async {
-    try {
-      // Cridar a la llista d'alumnes associats
-      var alumnes = await _repository.getAlumnesList();
-      var alumneTrobat = alumnes.any((a) => a.id == id);
-      if (!alumneTrobat) {
-        // Redirigir a la pantalla d'alumnes associats
-      }      
-      alumne = alumnes.firstWhere((a) => a.id == id);  
-      _prefs.setLastAlumne(alumne.id);    
-      notifyListeners(); 
-      return LoginResult(DjauStatus.loaded, "", "");
-    } on AppException catch (f) {
-      _isLogged = DjauStatus.withoutUser;
-      errorType = f.prefix();
-      errorMessage = f.message();
-    } catch (e) {
-      _isLogged = DjauStatus.withoutUser;
-      errorMessage = "No hi ha dades de l'alumne ${alumne.nomComplet()}";
+  // Intentar fer login amb les credencials que hi ha emmagatzemades al sistema.
+  //Es fa servir quan es vol carregar l'últim usuari que ha entrat a l'aplicació
+  Future<LoginResult> loginWithStoredCredentials() async {
+    final username = await _prefs.getLastLogin();
+    if (username == null) {
+      return LoginResult(DjauStatus.withoutUser, "", "");
     }
-    notifyListeners();
-    return LoginResult(_isLogged, errorType, errorMessage);
-
+    final tutor = await _storage.loadTutor(username);
+    if (tutor == null) {
+      return LoginResult(DjauStatus.withoutUser, "", "");
+    }
+    // fer login
+    return login(tutor.username, tutor.password);
   }
 
+  /// Carrega l'alumne amb l'ID especificat.
+  /// Es fa servir per carregar la variable `alumne` quan ja s'ha fet login i es vol
+  /// carregar un altre alumne
+  Future loadAlumne(int id) async {
+    // Cridar a la llista d'alumnes associats
+    var alumnes = await _repository.getAlumnesList();
+    var alumneTrobat = alumnes.any((a) => a.id == id);
+    if (!alumneTrobat) {
+      // No es pot carregar l'alumne perquè no està associat al tutor que ha entrat al sistema
+      throw Exception("L'alumne amb ID $id no està associat al tutor");
+    }
+    alumne = alumnes.firstWhere((a) => a.id == id);
+    _prefs.setLastAlumne(alumne.id);
+    notifyListeners();
+  }
 
   /// Defineix quina és la pantalla inicial en iniciar el programa
   /// - No hi ha tutor -> Login (0)
-  /// - Hi ha tutor (1) -> Carregar l'últim alumne 
+  /// - Hi ha tutor (1) -> Carregar l'últim alumne
   Future<int> determineInitialPage() async {
     var username = await _prefs.getLastLogin();
     if (username == null) return 0;
     return 1;
   }
-  
+
   /// Carrega l'alumne que havia entrat per darrera vegada.
   /// La variable `alumne` s'inicialitza amb les seves dades o bé es posa
   /// el sistema en estat d'error.
@@ -117,11 +119,9 @@ class DjauModel with ChangeNotifier {
     if (idAlumne != null) {
       await loadAlumne(idAlumne);
     } else {
-      _isLogged = DjauStatus.withoutUser;
-      errorMessage = "L'alumne $alumne no pot es pot veure";
+      throw Exception("No hi ha dades de l'alumne per defecte");
     }
   }
-
 
   /// Obtenir una llista amb els noms dels alumnes i el seu id.
   /// Cal per poder llistar els noms dels alumnes a més del seu
@@ -129,7 +129,7 @@ class DjauModel with ChangeNotifier {
   Future<Map<int, String>> getAlumnes() async {
     var resultat = <int, String>{};
     var alumnes = await _repository.getAlumnesList();
-    for(var alumne in alumnes) {
+    for (var alumne in alumnes) {
       resultat[alumne.id] = alumne.nomComplet();
     }
     return resultat;
@@ -151,4 +151,3 @@ class DjauModel with ChangeNotifier {
     return response;
   }
 }
-

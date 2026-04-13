@@ -26,31 +26,28 @@ class UsersPage extends StatelessWidget {
     _users.value = await djau.getAlumnes();
   }
 
-  void gotoNewAlumne() {
-    GlobalNavigator.gotoNewAlumne();
-  }
-
   void gotoSortidesPage() {
     GlobalNavigator.forgetAndGo(SortidesPage.routeName);
   }
 
   void _gotoDashboard(BuildContext context, int idAlumne) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    var result = await djau.loadAlumne(idAlumne);
-    if (result.isLogged == DjauStatus.loaded) {
-      // No sé si fer popuntil
+    try {
+      await djau.loadAlumne(idAlumne);
+      // TODO: No sé si fer popuntil
       GlobalNavigator.go(Dashboard.routeName);
-    } else {
+    } catch (e) {
       // No volen distingir els tipus d'errors
-      GlobalNavigator.showAlertPopup(result.errorType, result.errorMessage);
+      GlobalNavigator.showAlertPopup(
+          "Error", "No s'ha pogut carregar l'alumne");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentLogin = context.watch<DjauModel>();
-    var nom = currentLogin.alumne.nom;
-    var currentAlumneId = currentLogin.alumne.id;
+    final model = context.watch<DjauModel>();
+    var nom = model.alumne.nomComplet();
+    var currentAlumneId = model.alumne.id;
 
     if (_users.value.isEmpty) {
       loadData(context);
@@ -62,18 +59,6 @@ class UsersPage extends StatelessWidget {
           haveleading: true,
           gotoUserPage: null,
           gotoSortides: gotoSortidesPage),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Anar a pàgina de login per afegir un alumne nou
-          // Fa pop. Ok?
-          gotoNewAlumne();
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-      ),
       body: ValueListenableBuilder<Map<int, String>>(
         valueListenable: _users,
         builder: (context, value, _) => value.isNotEmpty

@@ -11,14 +11,11 @@ import '../screens/dashboard_page.dart';
 import '../screens/login_page.dart';
 
 class GlobalNavigator {
-  static void gotoNewAlumne() {
-      gotoLogin();
-  }
 
-  static void gotoNewAlumneWithPop() {
+  static void gotoLoginPageWithPop() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).popUntil((route) => route.isFirst);
-      Navigator.of(context).pushNamed(LoginPage.routeName);
+    Navigator.of(context).pushNamed(LoginPage.routeName);
   }
 
   static void gotoLogin() {
@@ -28,16 +25,17 @@ class GlobalNavigator {
 
   static Future<void> gotoAlumne(BuildContext context, int id) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    var success =await djau.loadAlumne(id);
-    if (success.isLogged == DjauStatus.loaded) {
-      GlobalNavigator.go(Dashboard.routeName);
-    } else {
-      GlobalNavigator.showAlertDialog("No s'ha pogut carregar l'alumne ${djau.alumne.nomComplet()}");
+    try {
+      await djau.loadAlumne(id);
+      GlobalNavigator.go(Dashboard.routeName);      
+    } catch (e) {
+      GlobalNavigator.showAlertDialog(
+          "S'ha produït un error en carregar l'alumne: $e");
     }
   }
 
   static Future<void> gotoSortidaDetail(BuildContext context, int id) async {
-      GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
+    GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
   }
 
   static Future<Object?> forgetAndGo(String initialRoute) =>
@@ -59,11 +57,10 @@ class GlobalNavigator {
   static Future<Object?> go(String route) =>
       Navigator.pushNamed(navigatorKey.currentContext!, route);
 
-  static Future<Object?> goToId(String route, int id) =>
-      Navigator.pushNamed(
-        navigatorKey.currentContext!, 
+  static Future<Object?> goToId(String route, int id) => Navigator.pushNamed(
+        navigatorKey.currentContext!,
         route,
-        arguments: { 'id': id}, 
+        arguments: {'id': id},
       );
 
   static void showAlertDialog(String detail) {
@@ -140,6 +137,4 @@ class GlobalNavigator {
           ],
         ));
   }
-
-
 }

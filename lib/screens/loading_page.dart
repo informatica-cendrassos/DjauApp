@@ -54,17 +54,22 @@ class _LoadingPageState extends State<LoadingPage> {
     }
 
     switch (desti) {
-      case 0: // No hi ha alumnes, demanar registre
-        GlobalNavigator.gotoNewAlumneWithPop();
-        break; 
-      case 1: // Hi ha alumnes. S'ha de mirar si pot entrar l'alumne per defecte
-        await djau.loadDefaultAlumne();
+      case 0: // No hi ha tutor, demanar login
+        GlobalNavigator.gotoLoginPageWithPop();
+        break;
+      case 1: // Hi ha tutor. S'ha de mirar si pot entrar 
+        await djau.loginWithStoredCredentials();
         if (djau.isLogged()) {
-          initialRoute = Dashboard.routeName;
+          try {
+            await djau.loadDefaultAlumne();        
+            initialRoute = Dashboard.routeName;
+          } catch (e) {
+            // No s'ha pogut carregar l'alumne per defecte, anar a la llista d'alumnes
+            initialRoute = UsersPage.routeName;
+          }
         } else {
-          // L'alumne per defecte no ha pogut entrar
-          // anar a la llista d'alumnes
-          initialRoute = UsersPage.routeName;
+          // No s'ha pogut fer login, anar a la pantalla de login
+          initialRoute = LoginPage.routeName;
         }
         GlobalNavigator.forgetAndGo(initialRoute);
         break;
