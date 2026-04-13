@@ -126,7 +126,7 @@ class DjauModel with ChangeNotifier {
   /// Obtenir una llista amb els noms dels alumnes i el seu id.
   /// Cal per poder llistar els noms dels alumnes a més del seu
   /// id
-  Future<Map<int, String>> getAlumnes() async {
+  Future<Map<int, String>> getAlumnesMap() async {
     var resultat = <int, String>{};
     var alumnes = await _repository.getAlumnesList();
     for (var alumne in alumnes) {

@@ -23,7 +23,7 @@ class UsersPage extends StatelessWidget {
 
   void loadData(BuildContext context) async {
     final djau = Provider.of<DjauModel>(context, listen: false);
-    _users.value = await djau.getAlumnes();
+    _users.value = await djau.getAlumnesMap();
   }
 
   void gotoSortidesPage() {
