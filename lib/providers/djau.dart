@@ -98,14 +98,14 @@ class DjauModel with ChangeNotifier {
 
 
   /// Defineix quina és la pantalla inicial en iniciar el programa
-  /// - No hi ha alumnes -> Login (0)
-  /// - Hi ha alumnes (1) -> Carregar l'últim alumne 
+  /// - No hi ha tutor -> Login (0)
+  /// - Hi ha tutor (1) -> Carregar l'últim alumne 
   Future<int> determineInitialPage() async {
-    var alumnes = await _repository.getAlumnesList();
-    if (alumnes.isEmpty) return 0;
+    var username = await _prefs.getLastLogin();
+    if (username == null) return 0;
     return 1;
   }
-
+  
   /// Carrega l'alumne que havia entrat per darrera vegada.
   /// La variable `alumne` s'inicialitza amb les seves dades o bé es posa
   /// el sistema en estat d'error.
