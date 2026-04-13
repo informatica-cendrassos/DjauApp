@@ -73,5 +73,8 @@ Future<void> main() async {
 
   initializeDateFormatting().then((_) => {Routes(initialRoute: initialRoute)});
 
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  // BackgroundFetch només és suportat en Android i iOS
+  if (Platform.isAndroid || Platform.isIOS) {
+    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+  }
 }
