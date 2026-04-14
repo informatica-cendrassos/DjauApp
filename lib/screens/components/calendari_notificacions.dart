@@ -1,10 +1,42 @@
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/models/notificacio.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import "package:collection/collection.dart";
 import 'package:intl/intl.dart';
+
+import 'package:flutter/widget_previews.dart';
+
+@Preview(name: 'CalendariNotificacions')
+Widget previewCalendariNotificacions() {
+  final today = DateTime.now();
+  final courseStartYear =
+      today.month >= mesIniciCurs ? today.year : today.year - 1;
+  final firstCourseDay = DateTime(courseStartYear, mesIniciCurs, 1);
+  final lastCourseDay = DateTime(courseStartYear + 1, mesFinalCurs, 30);
+  final previewDay = today.isAfter(lastCourseDay)
+      ? lastCourseDay
+      : today.isBefore(firstCourseDay)
+          ? firstCourseDay
+          : today;
+
+  return previewPage(
+    body: CalendariNotificacions(
+      notificacions: const [],
+      focusedDay: previewDay,
+      selectedDay: previewDay,
+      firstCourseDay: firstCourseDay,
+      lastCourseDay: lastCourseDay,
+      format: CalendarFormat.month,
+      onMonthChange: (_) {},
+      onSelectDay: (_, __) {},
+      onFormatChanged: (_) {},
+      locale: null,
+    ),
+  );
+}
 
 class CalendariNotificacions extends StatelessWidget {
   final List<Notificacio> notificacions;
@@ -13,6 +45,7 @@ class CalendariNotificacions extends StatelessWidget {
   final DateTime lastCourseDay;
   final DateTime firstCourseDay;
   final CalendarFormat format;
+  final String? locale;
 
   final MonthChangeCallBack onMonthChange;
   final SelectedDayCallBack onSelectDay;
@@ -32,6 +65,7 @@ class CalendariNotificacions extends StatelessWidget {
     required this.onMonthChange,
     required this.onSelectDay,
     required this.onFormatChanged,
+    this.locale = 'ca_ES',
   });
 
   List<Notificacio> _getEventsForDay(DateTime day) {
@@ -73,7 +107,6 @@ class CalendariNotificacions extends StatelessWidget {
     if (selectedDay != null) {
       _selectedEvents.value = _getEventsForDay(selectedDay!);
     }
-
 
     return Column(children: [
       TableCalendar<Notificacio>(
@@ -144,7 +177,7 @@ class CalendariNotificacions extends StatelessWidget {
             },
             // markerBuilder:
           ),
-          locale: "ca_ES"),
+          locale: locale),
       Center(
         child: Text(
           _getSelectedDay(),

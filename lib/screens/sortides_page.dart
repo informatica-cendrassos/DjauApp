@@ -7,11 +7,50 @@ import 'package:cendrassos/models/resum_sortida.dart';
 import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/app_menu_bar.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/components/sortida_list_item.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
+
+@Preview(name: 'Sortides Page (Mock)')
+Widget previewSortidesPage() =>
+    previewWithTheme(child: const _SortidesPagePreview());
+
+class _SortidesPagePreview extends StatelessWidget {
+  const _SortidesPagePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final sampleSortides = [
+      ResumSortida(
+          1, 'ColOnies a la Cerdanya', '2026-05-03 08:00:00', true, false),
+      ResumSortida(2, 'Teatre en anglEs', '2026-05-19 10:30:00', false, true),
+      ResumSortida(
+          3, 'Visita a la depuradora', '2026-06-02 09:15:00', true, true),
+    ];
+
+    return previewPage(
+      appBar: const AppMenuBar(
+        nom: 'Alumne Prova',
+        haveleading: true,
+        gotoUserPage: null,
+        gotoSortides: null,
+      ),
+      body: ListView.builder(
+        itemCount: sampleSortides.length,
+        itemBuilder: (context, index) {
+          return SortidaListItem(
+            sortida: sampleSortides[index],
+            showDetail: (_, __) {},
+          );
+        },
+      ),
+    );
+  }
+}
 
 class SortidesPage extends StatefulWidget {
   static const routeName = '/sortides';

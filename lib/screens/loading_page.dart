@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/providers/djau.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
 import 'package:cendrassos/screens/dashboard_page.dart';
 import 'package:cendrassos/screens/login_page.dart';
@@ -9,6 +10,10 @@ import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/widget_previews.dart';
+
+@Preview(name: 'LoadingPage')
+Widget previewLoadingPage() => previewWithDjauModel(child: const LoadingPage());
 
 class LoadingPage extends StatefulWidget {
   static const routeName = '/loading';
@@ -57,15 +62,15 @@ class _LoadingPageState extends State<LoadingPage> {
       case 0: // No hi ha tutor, demanar login
         GlobalNavigator.gotoLoginPageWithPop();
         break;
-      case 1: // Hi ha tutor. S'ha de mirar si pot entrar 
+      case 1: // Hi ha tutor. S'ha de mirar si pot entrar
         await djau.loginWithStoredCredentials();
         if (djau.isLogged()) {
           try {
-            await djau.loadDefaultAlumne();        
+            await djau.loadDefaultAlumne();
             initialRoute = Dashboard.routeName;
           } catch (e) {
-            // No s'ha pogut carregar l'alumne per defecte, 
-            // però com que s'ha fet login correcte, 
+            // No s'ha pogut carregar l'alumne per defecte,
+            // però com que s'ha fet login correcte,
             // enviar a la llista d'alumnes
             initialRoute = UsersPage.routeName;
           }
@@ -80,7 +85,7 @@ class _LoadingPageState extends State<LoadingPage> {
     }
   }
 
-  // redirigeix a la pantalla de login. 
+  // redirigeix a la pantalla de login.
   // Es fa servir quan hi ha un error perquè es pugui
   // tornar a intentar fer login
   void _gotoLogin() {

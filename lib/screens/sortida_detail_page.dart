@@ -5,10 +5,49 @@ import 'package:cendrassos/models/sortida.dart';
 import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/app_menu_bar.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
+
+@Preview(name: 'Sortida Detail (Mock)')
+Widget previewSortidaDetailPage() =>
+    previewWithTheme(child: const _SortidaDetailPagePreview());
+
+class _SortidaDetailPagePreview extends StatelessWidget {
+  const _SortidaDetailPagePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final sampleSortida = Sortida(
+      'Sortida al Museu de la Ciencia',
+      '2026-04-22 09:00:00',
+      '2026-04-22 14:00:00',
+      'Visita guiada i taller practic de tecnologia.',
+      '12.50',
+      '2026-04-20 23:59:59',
+      false,
+      1001,
+    );
+
+    return previewPage(
+      appBar: const AppMenuBar(
+        nom: 'Pagaments',
+        haveleading: true,
+        gotoUserPage: null,
+        gotoSortides: null,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const SortidaDetailPage().showData(context, sampleSortida),
+        ),
+      ),
+    );
+  }
+}
 
 class SortidaDetailPage extends StatelessWidget {
   final int id;
@@ -127,6 +166,7 @@ class SortidaDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.outlined(
+      color: Theme.of(context).scaffoldBackgroundColor,
       elevation: 4.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,6 +186,7 @@ class SortidaDescription extends StatelessWidget {
             ),
           ),
           ListTile(
+            tileColor: Theme.of(context).scaffoldBackgroundColor,
             title: Text(
                 (sortida.preu != "0") ? "${sortida.preu} €" : "gratuita",
                 style: Theme.of(context).textTheme.titleLarge),

@@ -147,13 +147,36 @@ class Loading extends StatelessWidget {
 }
 
 String convertirDataPeninsular(BuildContext context, String textData) {
-  var data = DateFormat("dd/mm/yyyy hh:mm").parse(textData);
+  var data = _parseFlexibleDate(textData);
 
   return " ${DateFormat('d MMMM hh:mm', Localizations.localeOf(context).toString()).format(data)}";
 }
 
 String convertirDataAmerica(BuildContext context, String textData) {
-  var data = DateFormat("yyyy-mm-d hh:mm").parse(textData);
+  var data = _parseFlexibleDate(textData);
 
   return " ${DateFormat('d MMMM hh:mm', Localizations.localeOf(context).toString()).format(data)}";
+}
+
+DateTime _parseFlexibleDate(String rawValue) {
+  final value = rawValue.trim();
+
+  final formats = <String>[
+    'yyyy-MM-dd HH:mm:ss',
+    'yyyy-MM-dd HH:mm',
+    'yyyy/MM/dd HH:mm:ss',
+    'yyyy/MM/dd HH:mm',
+    'dd/MM/yyyy HH:mm:ss',
+    'dd/MM/yyyy HH:mm',
+  ];
+
+  for (final pattern in formats) {
+    try {
+      return DateFormat(pattern).parseStrict(value);
+    } catch (_) {
+      // Try next known format.
+    }
+  }
+
+  throw FormatException('No s\'ha pogut interpretar la data: $rawValue');
 }

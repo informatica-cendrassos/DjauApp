@@ -1,10 +1,16 @@
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/providers/djau.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:flutter/widget_previews.dart';
+
+@Preview(name: 'Login Page')
+Widget previewLoginPage() => previewWithTheme(child: const LoginPage());
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';

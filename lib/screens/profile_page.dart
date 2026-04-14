@@ -4,17 +4,57 @@ import 'package:cendrassos/models/perfil.dart';
 import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/app_menu_bar.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
+
+@Preview(name: 'Profile Page (Mock)')
+Widget previewProfilePage() =>
+    previewWithTheme(child: const _ProfilePagePreview());
+
+class _ProfilePagePreview extends StatelessWidget {
+  const _ProfilePagePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final samplePerfil = Perfil(
+      '4t ESO A',
+      '12/04/2010',
+      '600123123',
+      'Carrer Major 12, Girona',
+      [
+        Responsable('Anna Soler', 'anna.soler@example.com', '699111222'),
+        Responsable('Jordi Soler', 'jordi.soler@example.com', '699333444'),
+      ],
+    );
+
+    return previewPage(
+      appBar: const AppMenuBar(
+        nom: 'Alumne Prova',
+        haveleading: true,
+        gotoUserPage: null,
+        gotoSortides: null,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const ProfilePage().showData(context, samplePerfil),
+        ),
+      ),
+    );
+  }
+}
 
 class ProfilePage extends StatelessWidget {
   static const routeName = '/profile';
 
   const ProfilePage({super.key});
 
-  Widget responsableColumn(BuildContext context, String nom, String email, String telefon) {
+  Widget responsableColumn(
+      BuildContext context, String nom, String email, String telefon) {
     return Column(
       children: [
         Text(
@@ -26,6 +66,7 @@ class ProfilePage extends StatelessWidget {
           endIndent: 20,
         ),
         ListTile(
+          tileColor: Theme.of(context).scaffoldBackgroundColor,
           leading: Icon(
             Icons.email,
             color: Theme.of(context).primaryColor,
@@ -35,6 +76,7 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         ListTile(
+          tileColor: Theme.of(context).scaffoldBackgroundColor,
           leading: Icon(
             Icons.phone,
             color: Theme.of(context).colorScheme.primary,
@@ -76,6 +118,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(children: [
             ListTile(
+              tileColor: Theme.of(context).scaffoldBackgroundColor,
               leading: Icon(
                 Icons.cake,
                 color: Theme.of(context).primaryColor,
@@ -85,6 +128,7 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             ListTile(
+              tileColor: Theme.of(context).scaffoldBackgroundColor,
               leading: Icon(
                 Icons.home,
                 color: Theme.of(context).colorScheme.primary,
@@ -94,6 +138,7 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             ListTile(
+              tileColor: Theme.of(context).scaffoldBackgroundColor,
               leading: Icon(
                 Icons.phone,
                 color: Theme.of(context).colorScheme.primary,
@@ -105,6 +150,7 @@ class ProfilePage extends StatelessWidget {
           ]),
         ),
         Card(
+          color: Theme.of(context).scaffoldBackgroundColor,
           elevation: 4.0,
           shadowColor: Theme.of(context).primaryColorLight,
           child: Column(

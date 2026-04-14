@@ -1,10 +1,12 @@
 import 'package:cendrassos/screens/sortides_page.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 
 import '../config_djau.dart';
 import 'components/helpers.dart';
 import 'components/alumne_item.dart';
 import 'dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/djau.dart';
@@ -12,6 +14,45 @@ import '../utils/global_navigator.dart';
 import 'components/app_menu_bar.dart';
 
 const spaceAroundCells = 10.0;
+
+@Preview(name: 'Users Page (Mock)')
+Widget previewUsersPage() => previewWithTheme(child: const _UsersPagePreview());
+
+class _UsersPagePreview extends StatelessWidget {
+  const _UsersPagePreview();
+
+  @override
+  Widget build(BuildContext context) {
+    final alumnes = const {
+      1: 'Arnau Roca',
+      2: 'Berta Puig',
+      3: 'Clara SolA',
+    };
+
+    return previewPage(
+      appBar: const AppMenuBar(
+        nom: 'Tutor Prova',
+        haveleading: true,
+        gotoUserPage: null,
+        gotoSortides: null,
+      ),
+      body: ListView.separated(
+        itemCount: alumnes.length,
+        itemBuilder: (context, index) {
+          final idAlumne = alumnes.keys.elementAt(index);
+          final nom = alumnes[idAlumne] ?? '...';
+          return AlumneItem(
+            id: idAlumne,
+            nom: nom,
+            enabled: idAlumne == 2,
+            tryToGotoDashboard: (_, __) {},
+          );
+        },
+        separatorBuilder: (context, index) => const Divider(),
+      ),
+    );
+  }
+}
 
 class UsersPage extends StatelessWidget {
   static const routeName = '/users';

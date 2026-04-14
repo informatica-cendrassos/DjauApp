@@ -7,6 +7,7 @@ import 'package:cendrassos/api/api_response.dart';
 import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/calendari_notificacions.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/services/background_tasks.dart';
@@ -15,11 +16,69 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cendrassos/api/notifications_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter/widget_previews.dart';
 
 import '../config_djau.dart';
 import '../main.dart';
 import '../models/notificacio.dart';
 import 'components/app_menu_bar.dart';
+
+@Preview(name: 'Dashboard (Mock)')
+Widget previewDashboardPage() {
+  final today = DateTime.now();
+
+  // Calcula l'any d'inici del curs actual.
+  final courseStartYear =
+      today.month >= mesIniciCurs ? today.year : today.year - 1;
+  final firstCourseDay = DateTime(courseStartYear, mesIniciCurs, 1);
+  final lastCourseDay = DateTime(courseStartYear + 1, mesFinalCurs, 30);
+
+  // Clamp: durant l'estiu (juliol-agost) today cau fora del curs;
+  // en aquest cas fem servir l'últim dia del curs com a dia de mostra.
+  final previewDay = today.isAfter(lastCourseDay)
+      ? lastCourseDay
+      : today.isBefore(firstCourseDay)
+          ? firstCourseDay
+          : today;
+
+  final sampleNotificacions = [
+    Notificacio(
+      previewDay,
+      '08:15',
+      'Maria Serra',
+      'Entrega de projecte de matematiques',
+      'Recordatori',
+    ),
+    Notificacio(
+      previewDay,
+      '10:30',
+      'Pau Vila',
+      'Sortida al museu demA',
+      'Sortida',
+    ),
+  ];
+
+  return previewPage(
+    appBar: const AppMenuBar(
+      nom: 'Alumne Prova',
+      haveleading: false,
+      gotoUserPage: null,
+      gotoSortides: null,
+    ),
+    body: CalendariNotificacions(
+      notificacions: sampleNotificacions,
+      focusedDay: previewDay,
+      selectedDay: previewDay,
+      firstCourseDay: firstCourseDay,
+      lastCourseDay: lastCourseDay,
+      format: CalendarFormat.month,
+      onMonthChange: (_) {},
+      onSelectDay: (_, __) {},
+      onFormatChanged: (_) {},
+      locale: null,
+    ),
+  );
+}
 
 class Dashboard extends StatefulWidget {
   static const routeName = '/dashboard';
