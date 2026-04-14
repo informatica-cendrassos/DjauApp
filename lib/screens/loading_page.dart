@@ -64,11 +64,15 @@ class _LoadingPageState extends State<LoadingPage> {
             await djau.loadDefaultAlumne();        
             initialRoute = Dashboard.routeName;
           } catch (e) {
-            // No s'ha pogut carregar l'alumne per defecte, anar a la llista d'alumnes
+            // No s'ha pogut carregar l'alumne per defecte, 
+            // però com que s'ha fet login correcte, 
+            // enviar a la llista d'alumnes
             initialRoute = UsersPage.routeName;
           }
         } else {
-          // No s'ha pogut fer login, anar a la pantalla de login
+          // No s'ha pogut fer login, les credencials són
+          // incorrectes,anar a la pantalla de login
+          // per tornar a demanar les credencials
           initialRoute = LoginPage.routeName;
         }
         GlobalNavigator.forgetAndGo(initialRoute);
@@ -76,6 +80,9 @@ class _LoadingPageState extends State<LoadingPage> {
     }
   }
 
+  // redirigeix a la pantalla de login. 
+  // Es fa servir quan hi ha un error perquè es pugui
+  // tornar a intentar fer login
   void _gotoLogin() {
     var route = UsersPage.routeName;
     if (!Platform.isAndroid && !Platform.isIOS) {

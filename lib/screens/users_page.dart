@@ -34,7 +34,7 @@ class UsersPage extends StatelessWidget {
     final djau = Provider.of<DjauModel>(context, listen: false);
     try {
       await djau.loadAlumne(idAlumne);
-      // TODO: No sé si fer popuntil
+      // TODO: No sé si fer popuntil?
       GlobalNavigator.go(Dashboard.routeName);
     } catch (e) {
       // No volen distingir els tipus d'errors
