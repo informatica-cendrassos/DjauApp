@@ -60,7 +60,7 @@ Widget previewDashboardPage() {
 
   return previewPage(
     appBar: const AppMenuBar(
-      nom: 'Alumne Prova',
+      nom: 'Frederic Pi',
       haveleading: false,
       gotoUserPage: null,
       gotoSortides: null,

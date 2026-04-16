@@ -26,14 +26,14 @@ class _ProfilePagePreview extends StatelessWidget {
       '600123123',
       'Carrer Major 12, Girona',
       [
-        Responsable('Anna Soler', 'anna.soler@example.com', '699111222'),
-        Responsable('Jordi Soler', 'jordi.soler@example.com', '699333444'),
+        Responsable('Anna Soler', 'anna.soler@cendrassos.net', '699111222'),
+        Responsable('Jordi Soler', 'jordi.soler@cendrassos.net', '699333444'),
       ],
     );
 
     return previewPage(
       appBar: const AppMenuBar(
-        nom: 'Alumne Prova',
+        nom: 'Frederic Pi',
         haveleading: true,
         gotoUserPage: null,
         gotoSortides: null,

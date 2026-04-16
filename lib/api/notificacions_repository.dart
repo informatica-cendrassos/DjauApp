@@ -95,8 +95,8 @@ class NotificacionsRepository {
     }
   }
 
-  Future<Perfil> getProfile() async {
-    var url = pathProfile;
+  Future<Perfil> getProfile(int idAlumne) async {
+    var url = "$pathProfile/$idAlumne";
 
     final response = await _helper.get(url, getHeaders(currentToken));
     return Perfil.fromJson(response);
