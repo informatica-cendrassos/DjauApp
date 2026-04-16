@@ -11,7 +11,7 @@ import 'package:cendrassos/screens/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
-import 'package:cendrassos/screens/sortida_webview_page.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 @Preview(name: 'Sortida Detail (Mock)')
 Widget previewSortidaDetailPage() =>
@@ -40,21 +40,56 @@ class _SortidaDetailPagePreview extends StatelessWidget {
         gotoUserPage: null,
         gotoSortides: null,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: const SortidaDetailPage().showData(context, sampleSortida),
+      body: Builder(
+        builder: (innerContext) => SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SizedBox(
+              width: MediaQuery.of(innerContext).size.width * 0.9,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(innerContext).size.height * 0.7,
+                    child: SortidaDescription(
+                      sortida: sampleSortida,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          foregroundColor: Theme.of(innerContext).secondaryHeaderColor,
+                          backgroundColor: Theme.of(innerContext).primaryColor),
+                      onPressed: () {},
+                      child: const Text('Pagar'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class SortidaDetailPage extends StatelessWidget {
+class SortidaDetailPage extends StatefulWidget {
   final int id;
   const SortidaDetailPage({super.key, this.id = 0});
 
   static const routeName = '/sortida';
+
+  @override
+  State<SortidaDetailPage> createState() => _SortidaDetailPageState();
+}
+
+class _SortidaDetailPageState extends State<SortidaDetailPage> {
+  String? _paymentUrl;
+  String? _token;
 
   @override
   Widget build(BuildContext context) {
@@ -71,43 +106,47 @@ class SortidaDetailPage extends StatelessWidget {
         gotoSortides: () =>
             {Navigator.of(context).pushNamed(SortidesPage.routeName)},
       ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
+      body: _paymentUrl != null
+          ? PaymentWebViewWidget(url: _paymentUrl!, token: _token!)
+          : SingleChildScrollView(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      FutureBuilder<Sortida>(
+                          future: djau.loadSortida(arguments['id']),
+                          builder: (BuildContext build,
+                              AsyncSnapshot<Sortida> snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.hasData) {
+                              return showData(
+                                  context, snapshot.data as Sortida);
+                            } else if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.hasError) {
+                              var e = snapshot.error as AppException;
+                              return ErrorRetry(
+                                errorType: e.prefix(),
+                                errorMessage: e.message(),
+                                textBoto: missatgeOk,
+                                onRetryPressed: () => Navigator.pop(context),
+                              );
+                            } else {
+                              return const Loading(
+                                  loadingMessage: missatgeCarregantDades);
+                            }
+                          }),
+                    ],
+                  ),
                 ),
-                FutureBuilder<Sortida>(
-                    future: djau.loadSortida(arguments['id']),
-                    builder:
-                        (BuildContext build, AsyncSnapshot<Sortida> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
-                        return showData(context, snapshot.data as Sortida);
-                      } else if (snapshot.connectionState ==
-                              ConnectionState.done &&
-                          snapshot.hasError) {
-                        var e = snapshot.error as AppException;
-                        return ErrorRetry(
-                          errorType: e.prefix(),
-                          errorMessage: e.message(),
-                          textBoto: missatgeOk,
-                          onRetryPressed: () => Navigator.pop(context),
-                        );
-                      } else {
-                        return const Loading(
-                            loadingMessage: missatgeCarregantDades);
-                      }
-                    }),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -147,17 +186,12 @@ class SortidaDetailPage extends StatelessWidget {
               foregroundColor: Theme.of(context).secondaryHeaderColor,
               backgroundColor: Theme.of(context).primaryColor),
           onPressed: (!sortida.realitzat)
-              ? () async {
-                  var url =
-                      "$baseUrl$pathPagamentSortides${sortida.idPagament}/${djau.tutor.token}";
-                  if (context.mounted) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SortidaWebViewPage(url: url),
-                      ),
-                    );
-                  }
+              ? () {
+                  setState(() {
+                    _paymentUrl =
+                        "$baseUrl$pathPagamentSortides${sortida.idPagament}";
+                    _token = djau.tutor.token;
+                  });
                 }
               : null,
           child: const Text(
@@ -227,6 +261,62 @@ class SortidaDescription extends StatelessWidget {
                     "Data límit pel Pagament:\n  ${convertirDataAmerica(context, sortida.dataLimit)}",
                     style: Theme.of(context).textTheme.labelMedium),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class PaymentWebViewWidget extends StatefulWidget {
+  final String url;
+  final String token;
+
+  const PaymentWebViewWidget({super.key, required this.url, required this.token});
+
+  @override
+  State<PaymentWebViewWidget> createState() => _PaymentWebViewWidgetState();
+}
+
+class _PaymentWebViewWidgetState extends State<PaymentWebViewWidget> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          },
+        ),
+      )
+      ..loadRequest(
+        Uri.parse(widget.url),
+        headers: {
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
         ],
       ),
     );
