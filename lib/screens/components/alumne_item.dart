@@ -29,7 +29,7 @@ class AlumneItem extends StatelessWidget {
 
   Widget alumneItemContent(BuildContext context) {
     return ListTile(
-      tileColor: Theme.of(context).cardColor,
+      tileColor: Theme.of(context).scaffoldBackgroundColor,
       leading: Padding(
         padding: const EdgeInsets.all(10),
         child: Image.asset('assets/images/student2.png', fit: BoxFit.cover),

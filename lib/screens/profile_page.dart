@@ -150,7 +150,6 @@ class ProfilePage extends StatelessWidget {
           ]),
         ),
         Card(
-          color: Theme.of(context).scaffoldBackgroundColor,
           elevation: 4.0,
           shadowColor: Theme.of(context).primaryColorLight,
           child: Column(

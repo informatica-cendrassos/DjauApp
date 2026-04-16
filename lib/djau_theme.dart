@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 // Colors
 
 var primaryColor = const Color.fromRGBO(217, 48, 29, 1);
@@ -8,32 +7,62 @@ var primaryColorDark = const Color.fromARGB(255, 155, 28, 18);
 var primaryColorLight = const Color.fromARGB(255, 240, 133, 127);
 var secondaryColor = const Color(0xFFFFFFFF);
 var secondaryColorDark = const Color(0xffc0ae75);
-var cardColor = Colors.grey.shade100;
 var backgroundColor = Colors.grey.shade50;
+var cardColor = backgroundColor;
 
 var defaultColor = const Color(0x000000FF);
 
 Map<int, Color> _primaryColorMap = {
   050: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .1),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .1),
   100: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .2),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .2),
   200: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .3),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .3),
   300: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .4),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .4),
   400: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .5),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .5),
   500: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .6),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .6),
   600: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .7),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .7),
   700: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .8),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .8),
   800: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), .9),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      .9),
   900: Color.fromRGBO(
-      (primaryColor.r * 255.0).round().clamp(0, 255), (primaryColor.g * 255.0).round().clamp(0, 255), (primaryColor.b * 255.0).round().clamp(0, 255), 1),
+      (primaryColor.r * 255.0).round().clamp(0, 255),
+      (primaryColor.g * 255.0).round().clamp(0, 255),
+      (primaryColor.b * 255.0).round().clamp(0, 255),
+      1),
 };
 
 MaterialColor primarySwatch =
@@ -74,6 +103,16 @@ var cendrassosTheme = ThemeData(
   primaryColorDark: primaryColorDark,
   colorScheme: colorScheme,
   scaffoldBackgroundColor: backgroundColor,
+  canvasColor: backgroundColor,
+  cardColor: backgroundColor,
+  cardTheme: CardThemeData(
+    color: backgroundColor,
+    surfaceTintColor: Colors.transparent,
+    elevation: 0,
+  ),
+  listTileTheme: ListTileThemeData(
+    tileColor: backgroundColor,
+  ),
   textTheme: textTheme.apply(
     bodyColor: primaryColor,
     displayColor: Colors.white,

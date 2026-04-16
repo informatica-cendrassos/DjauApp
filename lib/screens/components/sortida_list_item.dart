@@ -24,7 +24,7 @@ class SortidaListItem extends StatelessWidget {
 
   Widget sortidaItemContent(BuildContext context) {
     return ListTile(
-      tileColor: Theme.of(context).cardColor,
+      tileColor: Theme.of(context).scaffoldBackgroundColor,
       title: Text(
         sortida.titol,
         textAlign: TextAlign.left,
