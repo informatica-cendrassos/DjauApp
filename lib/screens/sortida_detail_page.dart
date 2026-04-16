@@ -11,6 +11,7 @@ import 'package:cendrassos/screens/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
+import 'package:cendrassos/screens/sortida_webview_page.dart';
 
 @Preview(name: 'Sortida Detail (Mock)')
 Widget previewSortidaDetailPage() =>
@@ -132,6 +133,8 @@ class SortidaDetailPage extends StatelessWidget {
   }
 
   Container showButton(double width, Sortida sortida, BuildContext context) {
+    final djau = Provider.of<DjauModel>(context, listen: false);
+
     if (sortida.idPagament == null) {
       return Container();
     }
@@ -145,7 +148,16 @@ class SortidaDetailPage extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor),
           onPressed: (!sortida.realitzat)
               ? () async {
-                  // TODO
+                  var url =
+                      "$baseUrl$pathPagamentSortides${sortida.idPagament}/${djau.tutor.token}";
+                  if (context.mounted) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SortidaWebViewPage(url: url),
+                      ),
+                    );
+                  }
                 }
               : null,
           child: const Text(
