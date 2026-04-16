@@ -98,40 +98,44 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
-    var margew = MediaQuery.of(context).size.width / 4;
-    var margeh = MediaQuery.of(context).size.height / 4;
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          // Background
-          Container(
-            decoration: const BoxDecoration(),
-          ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final iconSize = (constraints.maxHeight * 0.25).clamp(120.0, 260.0);
 
-          /// Render the Title widget, loader and messages below each other
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: ConstrainedBox(
+                constraints:
+                    BoxConstraints(minHeight: constraints.maxHeight - 32),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Image.asset(
+                        'assets/images/icon.png',
+                        height: iconSize,
+                        width: iconSize,
+                      ),
 
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/icon.png',
-                height: margeh,
-                width: margew,
+                      /// Loader Animation Widget
+                      _errorMessage.isEmpty
+                          ? Loading(loadingMessage: _message)
+                          : ErrorRetryLogin(
+                              errorType: _errorType,
+                              errorMessage: _errorMessage,
+                              onRetryPressed: _load,
+                              onLogin: _gotoLogin,
+                            ),
+                    ],
+                  ),
+                ),
               ),
-
-              /// Loader Animation Widget
-              _errorMessage.isEmpty
-                  ? Loading(loadingMessage: _message)
-                  : ErrorRetryLogin(
-                      errorType: _errorType,
-                      errorMessage: _errorMessage,
-                      onRetryPressed: _load,
-                      onLogin: _gotoLogin,
-                    ),
-            ],
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
