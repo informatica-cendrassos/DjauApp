@@ -103,9 +103,13 @@ class DjauModel with ChangeNotifier {
   /// - No hi ha tutor -> Login (0)
   /// - Hi ha tutor (1) -> Carregar l'últim alumne
   Future<int> determineInitialPage() async {
+    try {
     var username = await _prefs.getLastLogin();
     if (username == null) return 0;
     return 1;
+    } catch (e) {
+      return 0;
+    }
   }
 
   /// Carrega l'alumne que havia entrat per darrera vegada.

@@ -1,5 +1,6 @@
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
+import 'package:cendrassos/api/exceptions.dart';
 
 import '../config_djau.dart';
 import 'components/helpers.dart';
@@ -26,7 +27,7 @@ class _UsersPagePreview extends StatelessWidget {
     final alumnes = const {
       1: 'Arnau Roca',
       2: 'Berta Puig',
-      3: 'Clara SolA',
+      3: 'Clara Solà',
     };
 
     return previewPage(
@@ -54,17 +55,60 @@ class _UsersPagePreview extends StatelessWidget {
   }
 }
 
-class UsersPage extends StatelessWidget {
+class UsersPage extends StatefulWidget {
   static const routeName = '/users';
 
-  final ValueNotifier<Map<int, String>> _users =
-      ValueNotifier<Map<int, String>>({});
+  const UsersPage({super.key});
 
-  UsersPage({super.key});
+  @override
+  State<UsersPage> createState() => _UsersPageState();
+}
 
-  void loadData(BuildContext context) async {
+class _UsersPageState extends State<UsersPage> {
+  Map<int, String> _users = {};
+  bool _isLoading = true;
+  String _errorType = '';
+  String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    setState(() {
+      _isLoading = true;
+      _errorType = '';
+      _errorMessage = '';
+    });
+
     final djau = Provider.of<DjauModel>(context, listen: false);
-    _users.value = await djau.getAlumnesMap();
+
+    try {
+      final alumnes = await djau.getAlumnesMap();
+      if (!mounted) return;
+      setState(() {
+        _users = alumnes;
+        _isLoading = false;
+      });
+    } on AppException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _users = {};
+        _isLoading = false;
+        _errorType = e.prefix();
+        _errorMessage = e.message();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _users = {};
+        _isLoading = false;
+        _errorType = defaultErrorMessage;
+        _errorMessage = errorCarregant;
+      });
+    }
   }
 
   void gotoSortidesPage() {
@@ -90,56 +134,56 @@ class UsersPage extends StatelessWidget {
     var nom = model.alumne.nomComplet();
     var currentAlumneId = model.alumne.id;
 
-    if (_users.value.isEmpty) {
-      loadData(context);
-    }
-
     return Scaffold(
       appBar: AppMenuBar(
           nom: nom,
           haveleading: true,
           gotoUserPage: null,
           gotoSortides: gotoSortidesPage),
-      body: ValueListenableBuilder<Map<int, String>>(
-        valueListenable: _users,
-        builder: (context, value, _) => value.isNotEmpty
-            ? ListView.separated(
-                itemCount: _users.value.length,
-                itemBuilder: (context, index) {
-                  int idAlumne = _users.value.keys.elementAt(index);
-                  var nom = _users.value[idAlumne];
+      body: _isLoading
+          ? const Loading(
+              loadingMessage: missatgeCarregantDades,
+            )
+          : _errorMessage.isNotEmpty
+              ? ErrorRetry(
+                  errorType: _errorType,
+                  errorMessage: _errorMessage,
+                  textBoto: missatgeTornaAProvar,
+                  onRetryPressed: loadData,
+                )
+              : ListView.separated(
+                  itemCount: _users.length,
+                  itemBuilder: (context, index) {
+                    int idAlumne = _users.keys.elementAt(index);
+                    var nom = _users[idAlumne];
 
-                  return Dismissible(
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      alignment: AlignmentDirectional.centerEnd,
-                      color: Theme.of(context).primaryColorDark,
-                      child: const Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-                        child: Icon(Icons.delete, color: Colors.white),
+                    return Dismissible(
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: AlignmentDirectional.centerEnd,
+                        color: Theme.of(context).primaryColorDark,
+                        child: const Padding(
+                          padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
                       ),
-                    ),
-                    key: Key(idAlumne.toString()),
-                    onDismissed: (direction) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("$missatgeEliminant $nom")));
-                    },
-                    child: AlumneItem(
-                      id: idAlumne,
-                      nom: nom ?? "...",
-                      enabled: idAlumne == currentAlumneId,
-                      tryToGotoDashboard: _gotoDashboard,
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              )
-            : const Loading(
-                loadingMessage: missatgeCarregantDades,
-              ),
-      ),
+                      key: Key(idAlumne.toString()),
+                      onDismissed: (direction) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("$missatgeEliminant $nom")));
+                      },
+                      child: AlumneItem(
+                        id: idAlumne,
+                        nom: nom ?? "...",
+                        enabled: idAlumne == currentAlumneId,
+                        tryToGotoDashboard: _gotoDashboard,
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider();
+                  },
+                ),
     );
   }
 }

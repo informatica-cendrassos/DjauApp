@@ -97,6 +97,7 @@ dynamic _returnResponse(http.Response response) {
     var responseJson = json.decode(utf8.decode(response.bodyBytes));
     return responseJson;
   } else {
+    try {
     var jsonresult = json.decode(utf8.decode(response.bodyBytes));
     DjauError result = DjauError.fromJson(jsonresult);
     switch (response.statusCode) {
@@ -113,6 +114,10 @@ dynamic _returnResponse(http.Response response) {
       default:
         throw FetchDataException(
             'Error en connectar amb el servidor. ${response.statusCode}:$result. Proveu-ho més tard');
+    }
+    } on FormatException catch (_) {
+      throw FetchDataException(
+          'Sembla que el servidor té problemes. ${response.statusCode}: Proveu-ho més tard');
     }
   }
 }
