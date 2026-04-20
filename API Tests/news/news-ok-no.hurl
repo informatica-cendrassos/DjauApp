@@ -1,4 +1,7 @@
-# Comprova que dona error si un usuari logejat no envia la last_sync_date
+
+# Comprova que un usuari logejat si no hi ha novetats respon que no. 
+# per fer-ho, envia una data de darrera sincronització molt avançada 
+# (2522-11-18 12:00:13) i comprova que el resultat és "No"
 # ==============================================================================
 
 
@@ -20,9 +23,11 @@ header "Content-Type" == "application/json"
 POST https://{{host}}/api/token/notificacions/news/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
 Authorization: Bearer {{token}}
+{
+    "last_sync_date": "2522-11-18 12:00:13"
+}
 
 
-HTTP 400
+HTTP 200
 [Asserts]
-jsonpath "$.detail" exists
-jsonpath "$.detail" == "JSON parse error - Expecting value: line 1 column 1 (char 0)"
+jsonpath "$.resultat" == "No"

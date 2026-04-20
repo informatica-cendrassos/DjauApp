@@ -5,7 +5,7 @@ POST https://{{host}}/api-token-auth/
 Content-Type: application/json
 {
 	"username": "{{username}}",
-	"password": "TJmHR79PC"
+	"password": "{{badPassword}}"
 }
 
 HTTP 401

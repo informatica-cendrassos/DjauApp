@@ -1,7 +1,8 @@
 # Comprova que dóna error si enviem el token incorrecte
 # ==============================================================================
 
-GET https://{{host}}/api/token/notificacions/mes/12/234
+
+GET https://{{host}}/api/token/alumnes_associats/
 Content-Type: application/json
 Authorization: Bearer {{badToken}}
 

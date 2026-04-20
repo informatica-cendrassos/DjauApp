@@ -1,5 +1,9 @@
 
-# Comprova que un usuari logejat pot demanar si hi ha novetats
+# Comprova que un usuari logejat pot demanar si hi ha novetats i que
+# si hi ha, respon que sí. Per fer-ho, envia una data de darrera sincronització
+# molt antiga (2022-11-18 12:00:13) i comprova que el resultat és "Sí"
+# ==============================================================================
+
 
 POST https://{{host}}/api-token-auth/
 Content-Type: application/json

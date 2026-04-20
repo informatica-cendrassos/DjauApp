@@ -1,4 +1,6 @@
 # Comprova que un usuari logejat rep error si envia la data en un format incorrecte
+# ==============================================================================
+
 
 POST https://{{host}}/api-token-auth/
 Content-Type: application/json
@@ -17,7 +19,7 @@ header "Content-Type" == "application/json"
 # ------------ CAS 1 ----------------------------
 
 
-POST https://{{host}}/api/token/notificacions/news/
+POST https://{{host}}/api/token/notificacions/news/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
 Authorization: Bearer {{token}}
 {
@@ -33,7 +35,7 @@ jsonpath "$.error[0]" == "ups! petició amb errors"
 
 # ------------ CAS 2 ----------------------------
 
-POST https://{{host}}/api/token/notificacions/news/
+POST https://{{host}}/api/token/notificacions/news/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
 Authorization: Bearer {{token}}
 {

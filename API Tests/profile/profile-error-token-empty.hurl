@@ -1,6 +1,8 @@
 # Comprova l'error si no enviem token
-# ------------------------------------------------------------------------------
-GET https://{{host}}/api/token/alumnes/dades/
+# ==============================================================================
+
+
+GET https://{{host}}/api/token/alumnes/dades/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
 Authorization: JWT
 

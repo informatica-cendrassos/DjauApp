@@ -1,4 +1,6 @@
 # Comprova l'error si no enviem el token
+# ==============================================================================
+
 
 GET https://{{host}}/api/token/sortides/
 Content-Type: application/json

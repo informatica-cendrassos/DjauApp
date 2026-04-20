@@ -1,7 +1,5 @@
-
-# Comprova que pot demanar mesos incorrectes i no dóna error
+# Comprova que un usuari logejat pot demanar la llista d'alumnes
 # ==============================================================================
-
 
 POST https://{{host}}/api-token-auth/
 Content-Type: application/json
@@ -17,8 +15,7 @@ token: jsonpath "$.access"
 header "Content-Type" == "application/json"
 
 
-# Recupera la llista d'alumnes associats a l'usuari logejat
-# ------------------------------------------------------------------------------
+
 GET https://{{host}}/api/token/alumnes_associats/
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -26,14 +23,8 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Captures]
 alumneId: jsonpath "$.[0].id"
-
-
-GET https://{{host}}/api/token/notificacions/mes/25/{{alumneId}}/
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-HTTP 400
 [Asserts]
-jsonpath "$.error" exists
-jsonpath "$.error[0]" == "Mes inexistent"
-
+jsonpath "$" count > 0
+jsonpath "$[0].nom" exists
+jsonpath "$[0].cognoms" exists
+jsonpath "$[0].id" exists

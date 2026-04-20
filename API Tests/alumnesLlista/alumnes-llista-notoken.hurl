@@ -1,7 +1,8 @@
 # Comprova l'error si no enviem el token
 # ==============================================================================
 
-GET https://{{host}}/api/token/alumnes/dades/{{IdAlumneIncorrecte}}/
+
+GET https://{{host}}/api/token/alumnes_associats/
 Content-Type: application/json
 
 HTTP 401
