@@ -8,18 +8,15 @@ La instal·lació no hauria de ser un problema ja que només cal obtenir el bina
 
 Abans d'executar els tests cal tenir jocs de proves correctes:
 
-- Adreça del host on fer les proves
+- Adreça del host on fer les proves (varificar el fitxer vars.env)
 - un usuari i una contrasenya verificats
-- Identificadors per una sortida que s'ha de pagar
-- Id d'una sortida que no s'ha de pagar
 - Id que no és una sortida (suposo que el que ja hi ha mai existirà)
+- Els valors inexistents són improvisats ja que no se me n'ha proporcionat cap, però haurien de funcionar.
 
-S'edita el fitxer `vars.env` i s'hi defineix el host on està instal·lat el programa, l'usuari amb el que es faran les proves i la seva contrasenya (els altres es poden deixar):
+S'edita el fitxer `vars.env` i, si cal, s'hi canvia el host on està instal·lat el programa:
 
 ```ini
 host=djauproves.cendrassos.net
-username=API1RRE
-password=oJFbfMG5T95S
 IdAlumneIncorrecte=99999
 badPassword=wrongpassword
 sortidaInexistent=99999
@@ -29,7 +26,17 @@ badToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsIm
 Per executar tots els tests:
 
 ```bash
-hurl --test --variables-file vars.env --error-format=long */*.hurl
+./run-tests.sh
+```
+
+Es demanarà l'usuari i la contrasenya (la contrasenya no es mostra en pantalla):
+
+```log
+Usuari: API1RRE
+Contrasenya:
+============================================================================
+Executant 19 test(s)...
+============================================================================
 ```
 
 Va mostrant l'execució de cada un dels tests i en acabar dóna una estadística del resultat:
@@ -65,10 +72,15 @@ En l'execució es poden veure a què són deguts els errors ja que al afegir `--
 
 ## Executar les proves d'un sol domini
 
-Les proves estan organitzades en directoris que reflecteixen els dominis de les preguntes a l'API. Per tant per executar les proves només cal especificar el directori. Per exemple per executar totes les proves de la part de "sortides":
+Només cal passar el directori de les proves que es voen fer. Per exemple per executar totes les proves de la part de "sortides":
 
 ```bash
-$ hurl --test --variables-file vars.env --error-format=long sortidesDetall/*
+$ ./run-tests.sh sortidesDetall
+Usuari: API1RRE
+Contrasenya:
+============================================================================
+Executant 4 test(s)...
+============================================================================
 sortidesDetall/sortides-detall-badtoken.hurl: Running [1/4]
 sortidesDetall/sortides-detall-badtoken.hurl: Success (1 request(s) in 26 ms)
 sortidesDetall/sortides-detall-no-pagament-ok.hurl: Running [2/4]
@@ -86,10 +98,10 @@ Duration:        1147 ms
 
 ## Executar un sol test
 
-Per executar un sol test només cal referenciar-lo directament:
+Passa el fitxer directament com a argument:
 
 ```bash
-$ hurl --test --variables-file vars.env --error-format=long profile/profile-ok.hurl
+$ ./run-tests.sh news profile/profile-ok.hurl
 profile/profile-ok.hurl: Success (3 request(s) in 7830 ms)
 --------------------------------------------------------------------------------
 Executed files:    1
@@ -101,4 +113,4 @@ Duration:          7844 ms
 
 ## Altres
 
-Hurl es pot executar de moltes altres formes. La documentació és bastant explícita.
+Hurl es pot executar de moltes altres formes. La documentació és bastant explícita. [web](http://hurl.dev)
