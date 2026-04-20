@@ -4,7 +4,7 @@
 
 GET https://{{host}}/api/token/alumnes/dades/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
-Authorization: JWT
+Authorization: Bearer
 
 HTTP 401
 [Asserts]

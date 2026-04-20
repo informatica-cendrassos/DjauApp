@@ -1,10 +1,6 @@
-
-# Comprova que un usuari logejat pot recuperar les dades de l'alumne associat
+# Comprova l'accés a l'endpoint de news amb GET per a dos alumnes
 # ==============================================================================
 
-
-# Comprova que l'alumne pot fer login per obtenir el token
-# ------------------------------------------------------------------------------
 
 POST https://{{host}}/api-token-auth/
 Content-Type: application/json
@@ -30,17 +26,26 @@ HTTP 200
 [Captures]
 alumneId: jsonpath "$.[0].id"
 
-# Comprova que pot recuperar dades de l'alumne associat
-# ------------------------------------------------------------------------------
-GET https://{{host}}/api/token/alumnes/dades/{{alumneId}}/
+
+# ------------ CAS 1: alumne real ----------------------------
+
+GET https://{{host}}/api/token/notificacions/news/{{alumneId}}/
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+
 HTTP 200
 [Asserts]
-jsonpath "$.grup" exists
-jsonpath "$.datanaixement" exists
-jsonpath "$.telefon" exists
-jsonpath "$.adreça" exists
-jsonpath "$.responsables" exists
-jsonpath "$.responsables" isCollection
+jsonpath "$.resultat" exists
+
+
+# ------------ CAS 2: alumne inexistent ----------------------------
+
+GET https://{{host}}/api/token/notificacions/news/{{IdAlumneIncorrecte}}/
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+HTTP 200
+[Asserts]
+jsonpath "$.resultat" == "No"

@@ -2,7 +2,7 @@
 # Comprova que no es veuen les sortiddes si no posa un token correcte
 # ==============================================================================
 
-GET https://{{host}}/api/token/sortides/{{sortidaOk}}/
+GET https://{{host}}/api/token/sortides/{{sortidaOk}}/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
 Authorization: Bearer {{badToken}}
 
