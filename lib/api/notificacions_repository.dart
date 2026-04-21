@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cendrassos/api/login_response.dart';
-import 'package:cendrassos/api/news_query.dart';
 import 'package:cendrassos/api/news_response.dart';
 import 'package:cendrassos/api/notificacions_response.dart';
 import 'package:cendrassos/api/resum_sortides_response.dart';
@@ -82,12 +81,11 @@ class NotificacionsRepository {
 
   // Comprovar si hi ha notificacions noves des de l'última sincronització
   // ------------------------------------------------------
-  Future<bool> areNewNotifications(String token, Alumne alumne, String lastSyncDate) async {
+  Future<bool> areNewNotifications(String token, Alumne alumne) async {
     var url = "$pathNews/${alumne.id}";
-    try {      
-      var query = NewsQuery(lastSyncDate: lastSyncDate).toJson();
+    try {            
       final response =
-          await _helper.post(url, query, getHeaders(token));
+          await _helper.get(url, getHeaders(token));
       debugPrint("Result $response");
       return NewsResponse.fromJson(response).resultIs("Sí");
     } catch (e) {

@@ -31,7 +31,7 @@ class DjauModel with ChangeNotifier {
   String errorType = "";
 
   // Credencials d'accés a l'aplicació
-  Tutor tutor = Tutor("", "", "", "");
+  Tutor tutor = Tutor("", "", "");
 
   // Alumne actual i darrer que s'ha fet servir
   Alumne alumne = Alumne(0, "", "");
