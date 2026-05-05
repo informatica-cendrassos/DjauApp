@@ -3,10 +3,11 @@
 # ============================================================================
 # Executa els tests Hurl de l'API del Djau
 #
-# Ús: ./run-tests.sh [domini|fitxer.hurl ...]
+# Ús: ./run-tests.sh [--verbose] [domini|fitxer.hurl ...]
 #
 # Exemples:
 #   ./run-tests.sh                         # executa tots els tests
+#   ./run-tests.sh --verbose               # executa tots els tests amb sortida detallada de hurl
 #   ./run-tests.sh news                    # executa els tests del domini 'news'
 #   ./run-tests.sh profile news            # executa els dominis 'profile' i 'news'
 #   ./run-tests.sh profile/profile-ok.hurl # executa un sol test
@@ -34,14 +35,25 @@ read -rp "Usuari: " username
 read -rsp "Contrasenya: " password
 echo
 
+# Parseja flags opcionals i conserva els objectius de test
+verbose_enabled=false
+target_args=()
+for arg in "$@"; do
+    if [[ "${arg}" == "--verbose" ]]; then
+        verbose_enabled=true
+    else
+        target_args+=("${arg}")
+    fi
+done
+
 # Determina quins tests cal executar
-if [[ $# -eq 0 ]]; then
+if [[ ${#target_args[@]} -eq 0 ]]; then
     # Per defecte: tots els tests de tots els subdirectoris
     mapfile -t test_targets < <(find "${SCRIPT_DIR}" -mindepth 2 -maxdepth 2 -name "*.hurl" | sort)
 else
     # Construeix la llista de fitxers a partir dels arguments
     test_targets=()
-    for arg in "$@"; do
+    for arg in "${target_args[@]}"; do
         # Si l'argument és un fitxer .hurl directament
         if [[ "${arg}" == *.hurl ]]; then
             test_targets+=("${SCRIPT_DIR}/${arg}")
@@ -66,9 +78,17 @@ echo "Executant ${#test_targets[@]} test(s)..."
 echo "============================================================================"
 
 # Executa hurl amb les credencials injectades per variable
-hurl --test \
-    --variables-file "${VARS_FILE}" \
-    --variable "username=${username}" \
-    --secret "password=${password}" \
-    --error-format=long \
+hurl_args=(
+    --test
+    --variables-file "${VARS_FILE}"
+    --variable "username=${username}"
+    --secret "password=${password}"
+    --error-format=long
+)
+
+if [[ "${verbose_enabled}" == true ]]; then
+    hurl_args+=(--verbose)
+fi
+
+hurl "${hurl_args[@]}" \
     "${test_targets[@]}"
