@@ -1,14 +1,6 @@
 
-# Comprova que un usuari logejat pot demanar les sortides associades a un alumne i que si 
-# una sortida no té pagament, el camp idPagament és null
-# ```json
-# [{"titol":"BATALLA DE L'EBRE","desde":"12/11/2024 06:00","finsa":"13/11/2024 21:00",
-# "programa":"Sortida per treballar la Guerra Civil Espanyola, en concret en espais on e",
-# preu":"53.00", "dataLimitPagament":"2024-10-31 23:59:00","realitzat":true,"idPagament":2144}]
-# ```
+# Comprova que no es veuen les sortiddes amb un alumne incorrecte i un token no vàlid
 # ==============================================================================
-
-
 POST https://{{host}}/api-token-auth/
 Content-Type: application/json
 {
@@ -41,32 +33,23 @@ alumneId: jsonpath "$.[0].id"
 # ------------------------------------------------------------------------------
 GET https://{{host}}/api/token/sortides/{{alumneId}}/
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token}}	
 
 HTTP 200
 [Captures]
-sortidaOkNoPagament: jsonpath "$[?(@.pagament == false)].id" first
+sortidaOk: jsonpath "$.[0].id"
 
 
-# Obtenir la sortida que no té pagament i comprovar que el camp idPagament és null
-# ------------------------------------------------------------------------------
 
-GET https://{{host}}/api/token/sortides/{{sortidaOkNoPagament}}/{{alumneId}}/
+GET https://{{host}}/api/token/sortides/{{sortidaOk}}/{{IdAlumneIncorrecte}}/
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{token}}	
 
-HTTP 200
+
+HTTP 401
 [Asserts]
-jsonpath "$.titol" exists
-jsonpath "$.desde" exists
-jsonpath "$.finsa" exists
-jsonpath "$.programa" exists
-jsonpath "$.preu" exists
-jsonpath "$.dataLimitPagament" exists
-jsonpath "$.realitzat" exists
-jsonpath "$.idPagament" exists
-jsonpath "$.idPagament" == null
-
+jsonpath "$.detail" exists
+jsonpath "$.detail" == "Given token not valid for any token type"
 
 
 

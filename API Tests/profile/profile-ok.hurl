@@ -41,6 +41,6 @@ HTTP 200
 jsonpath "$.grup" exists
 jsonpath "$.datanaixement" exists
 jsonpath "$.telefon" exists
-jsonpath "$.adreça" exists
+jsonpath "$.adreca" exists
 jsonpath "$.responsables" exists
 jsonpath "$.responsables" isCollection

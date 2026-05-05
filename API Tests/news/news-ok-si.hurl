@@ -39,4 +39,4 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.resultat" exists
-jsonpath "$.resultat" == "Sí" || jsonpath "$.resultat" == "No"
+jsonpath "$.resultat" matches /^(Sí|No)$/

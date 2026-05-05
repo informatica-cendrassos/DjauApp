@@ -38,6 +38,6 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Asserts]
-// Comprova que tots els resultats obtinguts tenen el camp id de la sortida
+# Comprova que tots els resultats obtinguts tenen el camp id de la sortida
 jsonpath "$.[*].id" exists
 
