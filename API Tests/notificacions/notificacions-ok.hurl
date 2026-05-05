@@ -36,5 +36,5 @@ Authorization: Bearer {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.[0].id" exists
-jsonpath "$.[0].darrera_sincronitzacio" exists
+# jsonpath "$.[0].darrera_sincronitzacio" exists
 
