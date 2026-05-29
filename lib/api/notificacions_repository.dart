@@ -3,6 +3,7 @@ import 'package:cendrassos/api/login_response.dart';
 import 'package:cendrassos/api/news_response.dart';
 import 'package:cendrassos/api/notificacions_response.dart';
 import 'package:cendrassos/api/resum_sortides_response.dart';
+import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/models/perfil.dart';
 import 'package:cendrassos/models/resum_sortida.dart';
@@ -32,7 +33,6 @@ class NotificacionsRepository {
   static Login? lastLogin;
   static String currentToken = "";
 
-
   // Crida al login per obtenir el token, que després es pot usar per a les altres crides
   // ------------------------------------------------------
   Future<LoginResponse> login(Login dades) async {
@@ -53,6 +53,10 @@ class NotificacionsRepository {
   // ------------------------------------------------------
   Future<LoginResponse> refreshTokenMethod() async {
     debugPrint('Relogin');
+
+    if (lastLogin == null) {
+      throw UnauthorisedException(errorFentLogin);
+    }
 
     var response = await login(lastLogin!);
     currentToken = response.accessToken;
@@ -83,9 +87,8 @@ class NotificacionsRepository {
   // ------------------------------------------------------
   Future<bool> areNewNotifications(String token, Alumne alumne) async {
     var url = "$pathNews/${alumne.id}";
-    try {            
-      final response =
-          await _helper.get(url, getHeaders(token));
+    try {
+      final response = await _helper.get(url, getHeaders(token));
       debugPrint("Result $response");
       return NewsResponse.fromJson(response).resultIs("Sí");
     } catch (e) {

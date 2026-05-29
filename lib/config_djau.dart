@@ -52,8 +52,7 @@ const String defaultErrorMessage = "ERROR";
 const String undefinedError = "Hi ha hagut un error indeterminat";
 const String errorCarregant =
     "ERROR carregant les dades. Torna-ho a provar més tard";
-const String errorQR = "El codi QR és incorrecte";
-
+const String errorFentLogin = "Usuari o contrasenya incorrectes";
 // Sortides
 const String carregantSortides = "Recuperant sortides";
 

@@ -22,8 +22,23 @@ class ApiBaseHelper {
         when: (response) => response.statusCode == 401,
         onRetry: (request, response, retryCount) async {
           if (retryCount == 0 && response?.statusCode == 401) {
+            final requestPath = request.url.path;
+            final isAuthEndpoint =
+                requestPath == pathLogin || requestPath == tokenRefresh;
+            if (isAuthEndpoint) {
+              return;
+            }
+
             var result = await relogin();
-            newToken = result["access"];
+            if (result is Map && result.containsKey('access')) {
+              newToken = result['access'] as String;
+            } else {
+              newToken = result.accessToken as String;
+            }
+
+            if (newToken.isNotEmpty) {
+              request.headers['Authorization'] = '$bearerText $newToken';
+            }
           }
         });
   }
@@ -35,8 +50,6 @@ class ApiBaseHelper {
         "Accept": "application/json",
         "Authorization": "$bearerText $token",
       };
-
-
 
   static const String noInternet =
       "Hi ha problemes per accedir a la xarxa. Proveu-ho més tard";
@@ -98,23 +111,23 @@ dynamic _returnResponse(http.Response response) {
     return responseJson;
   } else {
     try {
-    var jsonresult = json.decode(utf8.decode(response.bodyBytes));
-    DjauError result = DjauError.fromJson(jsonresult);
-    switch (response.statusCode) {
-      case 400:
-        throw BadRequestException(result.toString());
-      case 401:
-      case 403:
-      case 405:
-        throw UnauthorisedException(result.toString());
-      case 404:
-        throw FetchDataException(
-            'Error. Es demana un lloc inexistent. ${response.statusCode}:${response.reasonPhrase}');
-      case 500:
-      default:
-        throw FetchDataException(
-            'Error en connectar amb el servidor. ${response.statusCode}:$result. Proveu-ho més tard');
-    }
+      var jsonresult = json.decode(utf8.decode(response.bodyBytes));
+      DjauError result = DjauError.fromJson(jsonresult);
+      switch (response.statusCode) {
+        case 400:
+          throw BadRequestException(result.toString());
+        case 401:
+        case 403:
+        case 405:
+          throw UnauthorisedException(result.toString());
+        case 404:
+          throw FetchDataException(
+              'Error. Es demana un lloc inexistent. ${response.statusCode}:${response.reasonPhrase}');
+        case 500:
+        default:
+          throw FetchDataException(
+              'Error en connectar amb el servidor. ${response.statusCode}:$result. Proveu-ho més tard');
+      }
     } on FormatException catch (_) {
       throw FetchDataException(
           'Sembla que el servidor té problemes. ${response.statusCode}: Proveu-ho més tard');
