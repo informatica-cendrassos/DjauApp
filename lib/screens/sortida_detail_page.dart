@@ -119,7 +119,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
                         height: 10,
                       ),
                       FutureBuilder<Sortida>(
-                          future: djau.loadSortida(arguments['id']),
+                          future: djau.loadSortida(arguments['id'],djau.alumne.id),
                           builder: (BuildContext build,
                               AsyncSnapshot<Sortida> snapshot) {
                             if (snapshot.connectionState ==

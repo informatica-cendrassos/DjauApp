@@ -156,8 +156,8 @@ class DjauModel with ChangeNotifier {
   }
 
   // Carregar el detalla de la sortida
-  Future<Sortida> loadSortida(int id) async {
-    final response = await _repository.getSortida(id);
+  Future<Sortida> loadSortida(int id, int alumneId) async {
+    final response = await _repository.getSortida(id, alumneId);
     return response;
   }
 }

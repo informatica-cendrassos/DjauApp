@@ -111,8 +111,8 @@ class NotificacionsRepository {
     return results.results;
   }
 
-  Future<Sortida> getSortida(int id) async {
-    var url = "$pathSortides/$id/";
+  Future<Sortida> getSortida(int id, int alumneId) async {
+    var url = "$pathSortides/$id/$alumneId";
 
     final response = await _helper.get(url, getHeaders(currentToken));
     return Sortida.fromJson(response);
