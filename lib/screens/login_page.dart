@@ -1,6 +1,8 @@
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
+import 'package:cendrassos/screens/dashboard_page.dart';
+import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 
 import 'package:flutter/material.dart';
@@ -142,7 +144,16 @@ class _LoginPageState extends State<LoginPage> {
 
   void gotoDashboard(LoginResult x, BuildContext context) {
     if (x.isLogged == DjauStatus.loaded) {
-      GlobalNavigator.forgetAndGo('/dashboard');
+      // Ha d'anar al dashboard o a la pantalla de selecció d'alumnes 
+      // segons si hi ha un alumne per defecte o no
+      var djau = context.read<DjauModel>();
+      djau.hasDefaultAlumne().then((hasDefault) {
+        if (hasDefault) {
+          GlobalNavigator.forgetAndGo(Dashboard.routeName);
+        } else {
+          GlobalNavigator.forgetAndGo(UsersPage.routeName);
+        }
+      });
     } else {
       GlobalNavigator.showAlertPopup(
         x.errorType,

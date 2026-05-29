@@ -112,6 +112,12 @@ class DjauModel with ChangeNotifier {
     }
   }
 
+  // Comprova si hi ha un alumne per defecte que es pugui carregar  
+  Future<bool> hasDefaultAlumne() async {
+    var idAlumne = await _prefs.getLastAlumne();
+    return idAlumne != null;
+  }
+
   /// Carrega l'alumne que havia entrat per darrera vegada.
   /// La variable `alumne` s'inicialitza amb les seves dades o bé es posa
   /// el sistema en estat d'error.

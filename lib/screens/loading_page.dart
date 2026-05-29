@@ -45,7 +45,6 @@ class _LoadingPageState extends State<LoadingPage> {
     });
 
     var djau = Provider.of<DjauModel>(context, listen: false);
-    // Comprovar si tots els alumnes poden fer login:
     // - Si: Carregar el darrer alumne i mirar si pot fer login
     var desti = await djau.determineInitialPage();
 
