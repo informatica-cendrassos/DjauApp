@@ -130,10 +130,16 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
                             } else if (snapshot.connectionState ==
                                     ConnectionState.done &&
                                 snapshot.hasError) {
-                              var e = snapshot.error as AppException;
+                              final error = snapshot.error;
+                              final errorType = error is AppException
+                                  ? error.prefix()
+                                  : defaultErrorMessage;
+                              final errorMessage = error is AppException
+                                  ? error.message()
+                                  : error?.toString() ?? undefinedError;
                               return ErrorRetry(
-                                errorType: e.prefix(),
-                                errorMessage: e.message(),
+                                errorType: errorType,
+                                errorMessage: errorMessage,
                                 textBoto: missatgeOk,
                                 onRetryPressed: () => Navigator.pop(context),
                               );
@@ -187,10 +193,16 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
               backgroundColor: Theme.of(context).primaryColor),
           onPressed: (!sortida.realitzat)
               ? () {
+                  debugPrint(
+                    'Pagar premut: titol=${sortida.titol}, idPagament=${sortida.idPagament}, realitzat=${sortida.realitzat}',
+                  );
                   setState(() {
                     _paymentUrl =
                         "$baseUrl$pathPagamentSortides${sortida.idPagament}";
                     _token = djau.tutor.token;
+                    debugPrint(
+                      'Obrint WebView: paymentUrl=$_paymentUrl, tokenPresent=${_token != null}',
+                    );
                   });
                 }
               : null,

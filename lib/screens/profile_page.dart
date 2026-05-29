@@ -200,10 +200,16 @@ class ProfilePage extends StatelessWidget {
                     } else if (snapshot.connectionState ==
                             ConnectionState.done &&
                         snapshot.hasError) {
-                      var e = snapshot.error as AppException;
+                      final error = snapshot.error;
+                      final errorType = error is AppException
+                          ? error.prefix()
+                          : defaultErrorMessage;
+                      final errorMessage = error is AppException
+                          ? error.message()
+                          : error?.toString() ?? undefinedError;
                       return ErrorRetry(
-                        errorType: e.prefix(),
-                        errorMessage: e.message(),
+                        errorType: errorType,
+                        errorMessage: errorMessage,
                         textBoto: missatgeOk,
                         onRetryPressed: () => Navigator.pop(context),
                       );
