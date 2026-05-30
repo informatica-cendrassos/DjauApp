@@ -80,7 +80,7 @@ HTTP 200
 
 [Asserts]
 header "Content-Type" == "text/html; charset=utf-8"
-xpath "//li/strong[contains(normalize-space(.), 'NO TÉ AUTORITZACIÓ')]" not exists
+xpath "string(//li/strong/text())" contains "NO TÉ AUTORITZACIÓ PER ACCEDIR AL PAGAMENT"
 
 
 
