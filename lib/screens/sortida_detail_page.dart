@@ -6,12 +6,12 @@ import 'package:cendrassos/providers/djau.dart';
 import 'package:cendrassos/screens/components/app_menu_bar.dart';
 import 'package:cendrassos/screens/components/helpers.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
+import 'package:cendrassos/screens/payment_web_view_widget.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 @Preview(name: 'Sortida Detail (Mock)')
 Widget previewSortidaDetailPage() =>
@@ -61,7 +61,8 @@ class _SortidaDetailPagePreview extends StatelessWidget {
                     alignment: Alignment.center,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          foregroundColor: Theme.of(innerContext).secondaryHeaderColor,
+                          foregroundColor:
+                              Theme.of(innerContext).secondaryHeaderColor,
                           backgroundColor: Theme.of(innerContext).primaryColor),
                       onPressed: () {},
                       child: const Text('Pagar'),
@@ -106,7 +107,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
         gotoSortides: () =>
             {Navigator.of(context).pushNamed(SortidesPage.routeName)},
       ),
-      body: _paymentUrl != null
+      body: _paymentUrl != null && _token != null
           ? PaymentWebViewWidget(url: _paymentUrl!, token: _token!)
           : SingleChildScrollView(
               child: SizedBox(
@@ -119,7 +120,8 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
                         height: 10,
                       ),
                       FutureBuilder<Sortida>(
-                          future: djau.loadSortida(arguments['id'],djau.alumne.id),
+                          future:
+                              djau.loadSortida(arguments['id'], djau.alumne.id),
                           builder: (BuildContext build,
                               AsyncSnapshot<Sortida> snapshot) {
                             if (snapshot.connectionState ==
@@ -198,7 +200,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
                   );
                   setState(() {
                     _paymentUrl =
-                        "$baseUrl$pathPagamentSortides${sortida.idPagament}";
+                        "$baseUrl$pathPagamentSortides${sortida.idPagament}/";
                     _token = djau.tutor.token;
                     debugPrint(
                       'Obrint WebView: paymentUrl=$_paymentUrl, tokenPresent=${_token != null}',
@@ -273,62 +275,6 @@ class SortidaDescription extends StatelessWidget {
                     "Data límit pel Pagament:\n  ${convertirDataAmerica(context, sortida.dataLimit)}",
                     style: Theme.of(context).textTheme.labelMedium),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class PaymentWebViewWidget extends StatefulWidget {
-  final String url;
-  final String token;
-
-  const PaymentWebViewWidget({super.key, required this.url, required this.token});
-
-  @override
-  State<PaymentWebViewWidget> createState() => _PaymentWebViewWidgetState();
-}
-
-class _PaymentWebViewWidgetState extends State<PaymentWebViewWidget> {
-  late final WebViewController _controller;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) {
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          },
-        ),
-      )
-      ..loadRequest(
-        Uri.parse(widget.url),
-        headers: {
-          'Authorization': 'Bearer ${widget.token}',
-        },
-      );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_isLoading)
-            Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
         ],
       ),
     );
