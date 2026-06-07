@@ -1,7 +1,26 @@
 import 'package:cendrassos/models/notificacio.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 
 import '../../config_djau.dart';
+
+@Preview(name: 'Notificacio Dialog')
+Widget previewNotificacioDialog() => previewWithTheme(
+      child: Scaffold(
+        body: Center(
+          child: NotificacioDialog(
+            notificacio: Notificacio(
+              DateTime(2026, 6, 7),
+              '10:30',
+              'M. Roca',
+              'Recordatori: demà hi ha reunió de coordinació a la sala 2.',
+              tipusNotificacio.first,
+            ),
+          ),
+        ),
+      ),
+    );
 
 class NotificacioDialog extends StatelessWidget {
   final Notificacio notificacio;
@@ -29,6 +48,9 @@ class NotificacioDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(left: 20, top: 60, right: 20, bottom: 20),
       margin: const EdgeInsets.only(top: 45),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           color: Theme.of(context).cardColor,
@@ -124,11 +146,13 @@ class NotificacioDialog extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          Expanded(
-            child: Text(
-              notificacio.text,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.start,
+          Flexible(
+            child: SingleChildScrollView(
+              child: Text(
+                notificacio.text,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.start,
+              ),
             ),
           ),
           const SizedBox(

@@ -1,6 +1,43 @@
 import 'package:cendrassos/config_djau.dart';
+import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:intl/intl.dart';
+
+@Preview(name: 'ErrorRetry')
+Widget previewErrorRetry() => previewWithTheme(
+      child: const Scaffold(
+        body: ErrorRetry(
+          errorType: 'Error de connexio',
+          errorMessage: 'No s\'ha pogut obtenir la informacio.',
+          textBoto: missatgeTornaAProvar,
+          onRetryPressed: _noop,
+        ),
+      ),
+    );
+
+@Preview(name: 'ErrorRetryLogin')
+Widget previewErrorRetryLogin() => previewWithTheme(
+      child: const Scaffold(
+        body: ErrorRetryLogin(
+          errorType: 'Sessio caducada',
+          errorMessage: 'Torna a iniciar sessio per continuar.',
+          onRetryPressed: _noop,
+          onLogin: _noop,
+        ),
+      ),
+    );
+
+@Preview(name: 'Loading Widget')
+Widget previewLoadingWidget() => previewWithTheme(
+      child: const Scaffold(
+        body: Loading(
+          loadingMessage: 'Carregant dades...',
+        ),
+      ),
+    );
+
+void _noop() {}
 
 class ErrorRetry extends StatelessWidget {
   final String errorType;
@@ -45,14 +82,11 @@ class ErrorRetry extends StatelessWidget {
           const SizedBox(
             height: 22,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: ElevatedButton(
-                onPressed: onRetryPressed,
-                child: const Text(
-                  missatgeOk,
-                )),
-          ),
+          ElevatedButton(
+              onPressed: onRetryPressed,
+              child: const Text(
+                missatgeOk,
+              )),
         ],
       ),
     );
@@ -110,6 +144,7 @@ class ErrorRetryLogin extends StatelessWidget {
           Column(
             children: [
               _boto(context, missatgeTornaAProvar, onRetryPressed),
+              const SizedBox(height: 10),
               _boto(context, missatgeTornaALogin, onLogin),
             ],
           ),
