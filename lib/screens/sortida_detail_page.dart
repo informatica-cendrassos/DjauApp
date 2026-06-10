@@ -254,26 +254,23 @@ class SortidaDescription extends StatelessWidget {
                 "${convertirDataPeninsular(context, sortida.desde)}\n${convertirDataPeninsular(context, sortida.finsa)}"),
             leading: const Icon(Icons.business_center),
           ),
-          //  Container(
-          //    height: 200.0,
-          //    child: Ink.image(
-          //      image: cardImage,
-          //      fit: BoxFit.cover,
-          //    ),
-          //  ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.centerLeft,
-            child: Text(sortida.programa),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            alignment: Alignment.centerLeft,
-            child: (sortida.idPagament == null)
-                ? Container()
-                : Text(
-                    "Data límit pel Pagament:\n  ${convertirDataAmerica(context, sortida.dataLimit)}",
-                    style: Theme.of(context).textTheme.labelMedium),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(sortida.programa),
+                  if (sortida.idPagament != null) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      "Data límit pel Pagament:\n  ${convertirDataAmerica(context, sortida.dataLimit)}",
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ],
       ),
