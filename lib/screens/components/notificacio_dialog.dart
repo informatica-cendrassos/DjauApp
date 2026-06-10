@@ -45,12 +45,18 @@ class NotificacioDialog extends StatelessWidget {
   }
 
   Widget contentBox(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isCompactHeight = mediaQuery.size.height < 700;
+
     return Container(
-      padding: const EdgeInsets.only(left: 20, top: 60, right: 20, bottom: 20),
-      margin: const EdgeInsets.only(top: 45),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      padding: EdgeInsets.only(
+        left: 20,
+        top: isCompactHeight ? 36 : 60,
+        right: 20,
+        bottom: 20,
       ),
+      margin: EdgeInsets.only(top: isCompactHeight ? 20 : 45),
+      height: mediaQuery.size.height * 0.8,
       decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           color: Theme.of(context).cardColor,
@@ -63,7 +69,7 @@ class NotificacioDialog extends StatelessWidget {
           ]),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
@@ -72,17 +78,14 @@ class NotificacioDialog extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      Text(
-                        notificacio.getDia(),
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      Text(
-                        notificacio.hora,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
+                  Text(
+                    '${notificacio.getDia()}  ${notificacio.hora}',
+                    style: Theme.of(
+                      context,
+                    )
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -132,7 +135,9 @@ class NotificacioDialog extends StatelessWidget {
                   Flexible(
                     child: Text(
                       notificacio.professor,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.black),
                     ),
                   ),
                 ],
@@ -146,11 +151,13 @@ class NotificacioDialog extends StatelessWidget {
           const SizedBox(
             height: 15,
           ),
-          Flexible(
+          Expanded(
             child: SingleChildScrollView(
               child: Text(
                 notificacio.text,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.black),
                 textAlign: TextAlign.start,
               ),
             ),
