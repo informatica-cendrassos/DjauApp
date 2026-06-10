@@ -36,7 +36,7 @@ const String calendarMostrames = "Veure el mes";
 
 // Textos dels missatges que es mostren per pantalla
 
-const String etiquetaProfessor = "Professor";
+const String etiquetaProfessor = "Professor/a";
 const String etiquetaHora = "";
 const String etiquetaDia = "Dia:";
 const String etiquetaDataNaixement = 'Entreu la data de naixement';
