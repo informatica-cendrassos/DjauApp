@@ -47,9 +47,9 @@ class DjauSecureStorage {
     if (data != null) {
       var responseJson = json.decode(data);
       return Tutor.fromJson(responseJson);
-    } else {
-      throw Exception("Not found");
-    }
+    } 
+    return null;
+    
   }
 
 }
