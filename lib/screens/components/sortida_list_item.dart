@@ -30,15 +30,20 @@ class SortidaListItem extends StatelessWidget {
         textAlign: TextAlign.left,
       ),
       subtitle: Text(convertirDataAmerica(context, sortida.data)),
-      trailing: !sortida.realitzat
-          ? Icon(
-              Icons.payment,
-              color: Theme.of(context).primaryColor,
-            )
-          : Icon(
-              Icons.output,
-              color: Theme.of(context).disabledColor,
-            ),
+      trailing: calculaIcona(context),
     );
+  }
+
+  Icon calculaIcona(BuildContext context) {
+    // Si la data és posterior a avui mostra la sortida desactivada
+    var color = Theme.of(context).primaryColor;
+    var dataSortida = DateTime.parse(sortida.data);
+    if (dataSortida.isBefore(DateTime.now()) || sortida.realitzat) {
+      color = Theme.of(context).disabledColor;
+    }
+
+    return !sortida.pagament
+        ? Icon(Icons.output, color: color)
+        : Icon(Icons.payment, color: color);
   }
 }
