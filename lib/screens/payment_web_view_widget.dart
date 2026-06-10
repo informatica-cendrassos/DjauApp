@@ -38,11 +38,20 @@ class _PaymentWebViewWidgetState extends State<PaymentWebViewWidget> {
     });
 
     try {
+      debugPrint('[PaymentWebView] Carregant URL: ${widget.url}');
       final controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(
           NavigationDelegate(
+            onNavigationRequest: (NavigationRequest request) {
+              debugPrint('[PaymentWebView] Navegació → ${request.url}');
+              return NavigationDecision.navigate;
+            },
+            onPageStarted: (String url) {
+              debugPrint('[PaymentWebView] Pàgina iniciada: $url');
+            },
             onPageFinished: (String url) {
+              debugPrint('[PaymentWebView] Pàgina carregada: $url');
               if (mounted) {
                 setState(() {
                   _isLoading = false;
@@ -50,10 +59,19 @@ class _PaymentWebViewWidgetState extends State<PaymentWebViewWidget> {
               }
             },
             onWebResourceError: (WebResourceError error) {
-              if (mounted) {
+              debugPrint(
+                '[PaymentWebView] Error de recurs:'
+                ' codi=${error.errorCode}'
+                ' desc=${error.description}'
+                ' url=${error.url}'
+                ' tipus=${error.errorType}'
+                ' isMainFrame=${error.isForMainFrame}',
+              );
+              if (mounted && (error.isForMainFrame ?? true)) {
                 setState(() {
                   _isLoading = false;
-                  _initializationError = error.description;
+                  _initializationError =
+                      '[${error.errorCode}] ${error.description}';
                 });
               }
             },
