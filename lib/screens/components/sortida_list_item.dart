@@ -37,8 +37,7 @@ class SortidaListItem extends StatelessWidget {
   Icon calculaIcona(BuildContext context) {
     // Si la data és posterior a avui mostra la sortida desactivada
     var color = Theme.of(context).primaryColor;
-    var dataSortida = DateTime.parse(sortida.data);
-    if (dataSortida.isBefore(DateTime.now()) || sortida.realitzat) {
+    if (sortida.isBefore(DateTime.now()) || sortida.realitzat) {
       color = Theme.of(context).disabledColor;
     }
 

@@ -193,7 +193,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
           style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).secondaryHeaderColor,
               backgroundColor: Theme.of(context).primaryColor),
-          onPressed: (!sortida.realitzat)
+          onPressed: (!sortida.realitzat && !sortida.isBefore(DateTime.now()))
               ? () {
                   debugPrint(
                     'Pagar premut: titol=${sortida.titol}, idPagament=${sortida.idPagament}, realitzat=${sortida.realitzat}',

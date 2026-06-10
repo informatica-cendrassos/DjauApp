@@ -38,6 +38,11 @@ class Sortida {
     );
   }
 
+  bool isBefore(DateTime date) {
+    DateTime dataLimitPagament = formatter.parse(dataLimit);
+    return dataLimitPagament.isBefore(date);
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> dades = <String, dynamic>{};
     dades[titolField] = titol;

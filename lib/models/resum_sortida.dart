@@ -44,6 +44,11 @@ class ResumSortida {
   }
 
   
+  bool isBefore(DateTime date) {
+    DateTime dataSortida = formatter.parse(data);
+    return dataSortida.isBefore(date);
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data[idField] = id;
