@@ -30,7 +30,11 @@ class DjauSecureStorage {
   /// en el que estigui corrent l'aplicació.
   Future<void> saveTutor(Tutor tutor) async {
     var json = jsonEncode(tutor.toJson());
-    _storage.writeSecureStorage(tutor.username, json);
+    await _storage.writeSecureStorage(tutor.username, json);
+  }
+
+  Future<void> deleteTutor(String username) async {
+    await _storage.deleteSecureData(username);
   }
 
   Future<dynamic> loadCurrentTutor() async {
@@ -38,7 +42,7 @@ class DjauSecureStorage {
     if (username != null) {
       return loadTutor(username);
     } else {
-      return Tutor("","","");
+      return Tutor("", "", "");
     }
   }
 
@@ -47,11 +51,9 @@ class DjauSecureStorage {
     if (data != null) {
       var responseJson = json.decode(data);
       return Tutor.fromJson(responseJson);
-    } 
+    }
     return null;
-    
   }
-
 }
 
 class DjauLocalStorage {
@@ -70,21 +72,26 @@ class DjauLocalStorage {
   /// que està definit a [username]
   Future<void> setLastLogin(String username) async {
     var prefs = await SharedPreferences.getInstance();
-    prefs.setString(lastLoginKey, username);
+    await prefs.setString(lastLoginKey, username);
+  }
+
+  Future<void> clearLastLogin() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove(lastLoginKey);
   }
 
   Future<void> setLastAlumne(int id) async {
     var prefs = await SharedPreferences.getInstance();
-    prefs.setInt(lastAlumneKey, id);
+    await prefs.setInt(lastAlumneKey, id);
+  }
+
+  Future<void> clearLastAlumne() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove(lastAlumneKey);
   }
 
   Future<int?> getLastAlumne() async {
     var prefs = await SharedPreferences.getInstance();
     return prefs.getInt(lastAlumneKey);
   }
-
-
-
-
-
 }

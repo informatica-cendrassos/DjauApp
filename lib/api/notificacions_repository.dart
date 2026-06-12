@@ -8,7 +8,7 @@ import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/models/perfil.dart';
 import 'package:cendrassos/models/resum_sortida.dart';
 import 'package:cendrassos/models/sortida.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/alumne.dart';
 import '../models/login.dart';
@@ -16,7 +16,12 @@ import 'api_base_helper.dart';
 import '../models/notificacio.dart';
 
 class NotificacionsRepository {
+  static const bool _debugLogsEnabled = kDebugMode;
+
   late final ApiBaseHelper _helper;
+  Login? _lastLogin;
+  String _currentToken = "";
+  bool _isRefreshing = false;
 
   NotificacionsRepository() {
     _helper = ApiBaseHelper(refreshTokenMethod);
@@ -24,14 +29,21 @@ class NotificacionsRepository {
 
   static String bearerText = "Bearer";
 
+  void _logDebug(String message) {
+    if (_debugLogsEnabled) {
+      debugPrint(message);
+    }
+  }
+
+  void setCurrentToken(String token) {
+    _currentToken = token;
+  }
+
   Map<String, String> getHeaders(String token) => {
         "Content-Type": "application/json",
         "Accept": "application/json",
         "Authorization": "$bearerText $token",
       };
-
-  static Login? lastLogin;
-  static String currentToken = "";
 
   // Crida al login per obtenir el token, que després es pot usar per a les altres crides
   // ------------------------------------------------------
@@ -43,8 +55,8 @@ class NotificacionsRepository {
     };
 
     final response = await _helper.post(url, dades.toJson(), requestHeaders);
-    lastLogin = dades;
-    currentToken = response["access"];
+    _lastLogin = dades;
+    _currentToken = response["access"];
 
     return LoginResponse.fromJson(response);
   }
@@ -52,15 +64,24 @@ class NotificacionsRepository {
   // Refresh del token, que es fa quan el client rep un 401, i que després es pot usar per a les altres crides
   // ------------------------------------------------------
   Future<LoginResponse> refreshTokenMethod() async {
-    debugPrint('Relogin');
+    _logDebug('Relogin');
 
-    if (lastLogin == null) {
+    if (_lastLogin == null) {
       throw UnauthorisedException(errorFentLogin);
     }
 
-    var response = await login(lastLogin!);
-    currentToken = response.accessToken;
-    return response;
+    if (_isRefreshing) {
+      throw UnauthorisedException(errorFentLogin);
+    }
+
+    _isRefreshing = true;
+    try {
+      var response = await login(_lastLogin!);
+      _currentToken = response.accessToken;
+      return response;
+    } finally {
+      _isRefreshing = false;
+    }
   }
 
   // Obtenir els alumnes associats a un tutor concret
@@ -68,7 +89,7 @@ class NotificacionsRepository {
   Future<List<Alumne>> getAlumnesList() async {
     var url = pathAlumnes;
 
-    final response = await _helper.get(url, getHeaders(currentToken));
+    final response = await _helper.get(url, getHeaders(_currentToken));
     return (response as List).map((e) => Alumne.fromJson(e)).toList();
   }
 
@@ -77,7 +98,7 @@ class NotificacionsRepository {
   Future<List<Notificacio>> getNotifications(int mes, int idAlumne) async {
     var url = "$pathNotificacions/$mes/$idAlumne";
 
-    final response = await _helper.get(url, getHeaders(currentToken));
+    final response = await _helper.get(url, getHeaders(_currentToken));
 
     var results = NotificacionsResponse.fromApi(response);
     return results.results;
@@ -89,7 +110,7 @@ class NotificacionsRepository {
     var url = "$pathNews/${alumne.id}";
     try {
       final response = await _helper.get(url, getHeaders(token));
-      debugPrint("Result $response");
+      _logDebug("Result $response");
       return NewsResponse.fromJson(response).resultIs("Sí");
     } catch (e) {
       return false;
@@ -99,7 +120,7 @@ class NotificacionsRepository {
   Future<Perfil> getProfile(int idAlumne) async {
     var url = "$pathProfile/$idAlumne";
 
-    final response = await _helper.get(url, getHeaders(currentToken));
+    final response = await _helper.get(url, getHeaders(_currentToken));
     return Perfil.fromJson(response);
   }
 
@@ -108,7 +129,7 @@ class NotificacionsRepository {
   Future<List<ResumSortida>> getSortides(int idAlumne) async {
     var url = "$pathSortides/$idAlumne";
 
-    final response = await _helper.get(url, getHeaders(currentToken));
+    final response = await _helper.get(url, getHeaders(_currentToken));
 
     var results = ResumSortidesResponse.fromApi(response);
     return results.results;
@@ -117,7 +138,7 @@ class NotificacionsRepository {
   Future<Sortida> getSortida(int id, int alumneId) async {
     var url = "$pathSortides/$id/$alumneId";
 
-    final response = await _helper.get(url, getHeaders(currentToken));
+    final response = await _helper.get(url, getHeaders(_currentToken));
     return Sortida.fromJson(response);
   }
 }

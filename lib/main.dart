@@ -39,7 +39,6 @@ void onNotification(String? payload) async {
     var prefs = await SharedPreferences.getInstance();
     prefs.setString(DjauLocalStorage.lastLoginKey, payload);
   }
-  Routes(initialRoute: LoadingPage.routeName);
 }
 
 Future<void> _configureLocalTimeZone() async {
@@ -57,13 +56,15 @@ Future<void> _configureLocalTimeZone() async {
 Future<void> main() async {
   String initialRoute = LoadingPage.routeName;
 
+  // ✅ CRÍTICA: Inicialitzar Flutter Binding PRIMER
+  // Necessari per accedir a SharedPreferences, platform channels, etc.
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ✅ Configurar timezone
   await _configureLocalTimeZone();
 
+  // ✅ Demanar permisos de notificacions en Android 13+
   if (Platform.isAndroid) {
-    // Necessari per Android 13 i posteriors
-    // https://developer.android.com/develop/ui/views/notifications/notification-permission
     await Permission.notification.isDenied.then((value) {
       if (value) {
         Permission.notification.request();
@@ -71,10 +72,14 @@ Future<void> main() async {
     });
   }
 
-  initializeDateFormatting().then((_) => {Routes(initialRoute: initialRoute)});
+  // ✅ Inicialitzar formatació de dates locals
+  await initializeDateFormatting();
 
-  // BackgroundFetch només és suportat en Android i iOS
+  // ✅ Registrar tasques de fons ANTES de runApp()
   if (Platform.isAndroid || Platform.isIOS) {
     BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   }
+
+  // ✅ ARA cridar runApp() amb totes les inicialitzacions completes
+  runApp(MyApp(initialRoute: initialRoute));
 }

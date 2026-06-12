@@ -23,6 +23,7 @@ class NotificacioBloc {
         StreamController<ApiResponse<List<Notificacio>>>();
     _notificacioRepository = NotificacionsRepository();
     _token = token;
+    _notificacioRepository.setCurrentToken(_token);
     _id = id;
     fetchNotificacions(DateTime.now().month);
   }
@@ -31,6 +32,7 @@ class NotificacioBloc {
     notificationsListSink
         .add(ApiResponse.loading('Recuperant notificacions', []));
     try {
+      _notificacioRepository.setCurrentToken(_token);
       var dades = await _notificacioRepository.getNotifications(mes, _id);
       notificationsListSink.add(ApiResponse.completed(dades));
     } catch (e) {
@@ -49,5 +51,6 @@ class NotificacioBloc {
 
   void setToken(String token) {
     _token = token;
+    _notificacioRepository.setCurrentToken(_token);
   }
 }

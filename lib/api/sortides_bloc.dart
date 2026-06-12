@@ -11,7 +11,8 @@ class SortidesBlock {
   int _idAlumne = 0;
 
   NotificacionsRepository _notificacioRepository = NotificacionsRepository();
-  StreamController<ApiResponse<List<ResumSortida>>> _resumSortidaListController =
+  StreamController<ApiResponse<List<ResumSortida>>>
+      _resumSortidaListController =
       StreamController<ApiResponse<List<ResumSortida>>>();
 
   StreamSink<ApiResponse<List<ResumSortida>>> get resumSortidaListSink =>
@@ -26,15 +27,15 @@ class SortidesBlock {
     _resumSortidaListController =
         StreamController<ApiResponse<List<ResumSortida>>>();
     _notificacioRepository = NotificacionsRepository();
-    
+    _notificacioRepository.setCurrentToken(_token);
+
     fetchSortides();
   }
 
   Future<void> fetchSortides() async {
-    
-    resumSortidaListSink
-        .add(ApiResponse.loading(carregantSortides, []));
+    resumSortidaListSink.add(ApiResponse.loading(carregantSortides, []));
     try {
+      _notificacioRepository.setCurrentToken(_token);
       var dades = await _notificacioRepository.getSortides(_idAlumne);
       resumSortidaListSink.add(ApiResponse.completed(dades));
     } catch (e) {
@@ -53,5 +54,6 @@ class SortidesBlock {
 
   void setToken(String token) {
     _token = token;
+    _notificacioRepository.setCurrentToken(_token);
   }
 }

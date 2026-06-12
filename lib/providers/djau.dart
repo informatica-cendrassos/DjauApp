@@ -5,7 +5,8 @@ import 'package:cendrassos/models/login.dart';
 import 'package:cendrassos/models/sortida.dart';
 import 'package:cendrassos/models/tutor.dart';
 import 'package:cendrassos/services/storage.dart';
-import 'package:flutter/material.dart';
+import 'package:cendrassos/config_djau.dart';
+import 'package:flutter/foundation.dart';
 
 import '../api/exceptions.dart';
 
@@ -20,9 +21,17 @@ class LoginResult {
 enum DjauStatus { loaded, error, withoutUser, disabled }
 
 class DjauModel with ChangeNotifier {
-  final NotificacionsRepository _repository = NotificacionsRepository();
-  final DjauSecureStorage _storage = DjauSecureStorage();
-  final DjauLocalStorage _prefs = DjauLocalStorage();
+  static const bool _debugLogsEnabled = kDebugMode;
+
+  final NotificacionsRepository _repository;
+  final DjauSecureStorage _storage;
+  final DjauLocalStorage _prefs;
+
+  void _logDebug(String message) {
+    if (_debugLogsEnabled) {
+      debugPrint(message);
+    }
+  }
 
   // Estat actual
   DjauStatus _isLogged = DjauStatus.withoutUser;
@@ -36,8 +45,43 @@ class DjauModel with ChangeNotifier {
   // Alumne actual i darrer que s'ha fet servir
   Alumne alumne = Alumne(0, "", "");
 
+  /// Constructor amb dependency injection
+  /// Permet testejar injectant mocks per a repository, storage, i prefs
+  DjauModel({
+    NotificacionsRepository? repository,
+    DjauSecureStorage? storage,
+    DjauLocalStorage? prefs,
+  })  : _repository = repository ?? NotificacionsRepository(),
+        _storage = storage ?? DjauSecureStorage(),
+        _prefs = prefs ?? DjauLocalStorage();
+
   bool isLogged() => _isLogged == DjauStatus.loaded;
   bool isError() => _isLogged == DjauStatus.error;
+
+  void _setErrorFromAppException(AppException exception) {
+    _isLogged = DjauStatus.error;
+    final prefix = exception.prefix().trim();
+    final message = exception.message().trim();
+    errorType = prefix.isEmpty ? defaultErrorMessage : prefix;
+    errorMessage = message.isEmpty ? undefinedError : message;
+  }
+
+  void _setUnexpectedError(Object exception) {
+    _isLogged = DjauStatus.error;
+    errorType = defaultErrorMessage;
+    errorMessage = undefinedError;
+    _logDebug('Unexpected login error: $exception');
+  }
+
+  Future<void> _clearStoredSession(String username) async {
+    try {
+      await _prefs.clearLastLogin();
+      await _prefs.clearLastAlumne();
+      await _storage.deleteTutor(username);
+    } catch (storageException) {
+      _logDebug('Stored session cleanup error: $storageException');
+    }
+  }
 
   /// Entrar en el sistema a través d'usuari [username] i
   /// contrasenya [password]. Es fa servir quan s'intenta fer login contra
@@ -53,16 +97,17 @@ class DjauModel with ChangeNotifier {
       _isLogged = DjauStatus.loaded;
       errorMessage = "";
       errorType = "";
-      _prefs.setLastLogin(username);
-      await _storage.saveTutor(tutor);
+      try {
+        await _prefs.setLastLogin(username);
+        await _storage.saveTutor(tutor);
+      } catch (storageException) {
+        // Si falla la persistència local, mantenim el login com a vàlid.
+        _logDebug('Login local persistence error: $storageException');
+      }
     } on AppException catch (f) {
-      _isLogged = DjauStatus.error;
-      errorType = f.prefix();
-      errorMessage = f.message();
+      _setErrorFromAppException(f);
     } catch (e) {
-      _isLogged = DjauStatus.error;
-      errorType = "ERROR";
-      errorMessage = e.toString();
+      _setUnexpectedError(e);
     }
     notifyListeners();
     return LoginResult(_isLogged, errorType, errorMessage);
@@ -71,16 +116,32 @@ class DjauModel with ChangeNotifier {
   // Intentar fer login amb les credencials que hi ha emmagatzemades al sistema.
   //Es fa servir quan es vol carregar l'últim usuari que ha entrat a l'aplicació
   Future<LoginResult> loginWithStoredCredentials() async {
-    final username = await _prefs.getLastLogin();
-    if (username == null) {
-      return LoginResult(DjauStatus.withoutUser, "", "");
+    try {
+      final username = await _prefs.getLastLogin();
+      if (username == null) {
+        return LoginResult(DjauStatus.withoutUser, "", "");
+      }
+
+      final tutor = await _storage.loadTutor(username);
+      if (tutor == null) {
+        await _prefs.clearLastLogin();
+        await _prefs.clearLastAlumne();
+        return LoginResult(DjauStatus.withoutUser, "", "");
+      }
+
+      final result = await login(tutor.username, tutor.password);
+      final isAuthError = result.errorType
+          .trim()
+          .startsWith(notAuthorizedExceptionMessage.trim());
+      if (result.isLogged == DjauStatus.error && isAuthError) {
+        await _clearStoredSession(tutor.username);
+      }
+      return result;
+    } catch (e) {
+      _setUnexpectedError(e);
+      notifyListeners();
+      return LoginResult(_isLogged, errorType, errorMessage);
     }
-    final tutor = await _storage.loadTutor(username);
-    if (tutor == null) {
-      return LoginResult(DjauStatus.withoutUser, "", "");
-    }
-    // fer login
-    return login(tutor.username, tutor.password);
   }
 
   /// Carrega l'alumne amb l'ID especificat.
@@ -103,16 +164,25 @@ class DjauModel with ChangeNotifier {
   /// - No hi ha tutor -> Login (0)
   /// - Hi ha tutor (1) -> Carregar l'últim alumne
   Future<int> determineInitialPage() async {
+    // Reinicia l'estat temporal d'error per evitar missatges stale en Retry.
+    _isLogged = DjauStatus.withoutUser;
+    errorType = "";
+    errorMessage = "";
+
     try {
-    var username = await _prefs.getLastLogin();
-    if (username == null) return 0;
-    return 1;
+      var username = await _prefs.getLastLogin();
+      if (username == null) return 0;
+      return 1;
     } catch (e) {
+      _isLogged = DjauStatus.error;
+      errorType = defaultErrorMessage;
+      errorMessage = errorCarregant;
+      _logDebug('Error determining initial page: $e');
       return 0;
     }
   }
 
-  // Comprova si hi ha un alumne per defecte que es pugui carregar  
+  // Comprova si hi ha un alumne per defecte que es pugui carregar
   Future<bool> hasDefaultAlumne() async {
     var idAlumne = await _prefs.getLastAlumne();
     return idAlumne != null;

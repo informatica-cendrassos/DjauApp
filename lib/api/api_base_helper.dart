@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/models/error.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -10,8 +10,29 @@ import 'dart:async';
 import 'package:http/retry.dart';
 
 class ApiBaseHelper {
+  static const bool _debugLogsEnabled = kDebugMode;
+
   static Uri createUrl(String urlpath) {
     return Uri.parse("$baseUrl$urlpath$endBaseUrl");
+  }
+
+  static void _logDebug(String message) {
+    if (_debugLogsEnabled) {
+      debugPrint(message);
+    }
+  }
+
+  static String _normalizePath(String path) {
+    if (path.length > 1 && path.endsWith('/')) {
+      return path.substring(0, path.length - 1);
+    }
+    return path;
+  }
+
+  static bool isAuthEndpointPath(String requestPath) {
+    final normalizedRequestPath = _normalizePath(requestPath);
+    return normalizedRequestPath == _normalizePath(pathLogin) ||
+        normalizedRequestPath == _normalizePath(tokenRefresh);
   }
 
   late RetryClient client;
@@ -23,8 +44,7 @@ class ApiBaseHelper {
         onRetry: (request, response, retryCount) async {
           if (retryCount == 0 && response?.statusCode == 401) {
             final requestPath = request.url.path;
-            final isAuthEndpoint =
-                requestPath == pathLogin || requestPath == tokenRefresh;
+            final isAuthEndpoint = isAuthEndpointPath(requestPath);
             if (isAuthEndpoint) {
               return;
             }
@@ -68,7 +88,7 @@ class ApiBaseHelper {
   // }
 
   Future<dynamic> get(String path, [dynamic headers]) async {
-    debugPrint('Api Get, url $path');
+    _logDebug('Api Get, url $path');
     headers ??= {};
     dynamic responseJson;
     try {
@@ -76,17 +96,17 @@ class ApiBaseHelper {
       final response = await client.get(url, headers: headers);
       responseJson = _returnResponse(response);
     } on SocketException {
-      debugPrint('No net');
+      _logDebug('No net');
       throw FetchDataException(noInternet);
     } on NoSuchMethodError catch (e) {
-      debugPrint(e.toString());
+      _logDebug(e.toString());
       throw FetchDataException("El servidor rebutja la petició");
     }
     return responseJson;
   }
 
   Future<dynamic> post(String path, dynamic body, [dynamic headers]) async {
-    debugPrint('Api Post, url $path');
+    _logDebug('Api Post, url $path');
     headers ??= {};
 
     try {
@@ -96,10 +116,10 @@ class ApiBaseHelper {
       var responseJson = _returnResponse(response);
       return responseJson;
     } on SocketException {
-      debugPrint('No net');
+      _logDebug('No net');
       throw FetchDataException(noInternet);
     } on NoSuchMethodError catch (e) {
-      debugPrint(e.toString());
+      _logDebug(e.toString());
       throw FetchDataException("El servidor rebutja la petició");
     }
   }
