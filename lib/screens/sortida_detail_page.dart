@@ -181,6 +181,8 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
 
   Container showButton(double width, Sortida sortida, BuildContext context) {
     final djau = Provider.of<DjauModel>(context, listen: false);
+    final now = DateTime.now();
+    final canPay = !sortida.realitzat && !sortida.isBefore(now);
 
     if (sortida.idPagament == null) {
       return Container();
@@ -193,7 +195,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
           style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).secondaryHeaderColor,
               backgroundColor: Theme.of(context).primaryColor),
-          onPressed: (!sortida.realitzat && !sortida.isBefore(DateTime.now()))
+          onPressed: canPay
               ? () {
                   debugPrint(
                     'Pagar premut: titol=${sortida.titol}, idPagament=${sortida.idPagament}, realitzat=${sortida.realitzat}',
