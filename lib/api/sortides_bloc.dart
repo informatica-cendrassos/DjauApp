@@ -4,10 +4,11 @@ import 'package:cendrassos/api/api_response.dart';
 import 'package:cendrassos/api/notificacions_repository.dart';
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/models/resum_sortida.dart';
+import 'package:cendrassos/models/tutor.dart';
 import 'package:flutter/material.dart';
 
 class SortidesBlock {
-  String _token = "";
+  Tutor _tutor = Tutor('', '', '', '');
   int _idAlumne = 0;
 
   NotificacionsRepository _notificacioRepository = NotificacionsRepository();
@@ -21,13 +22,13 @@ class SortidesBlock {
   Stream<ApiResponse<List<ResumSortida>>> get resumSortidaListStream =>
       _resumSortidaListController.stream;
 
-  SortidesBlock(String token, int idAlumne) {
-    _token = token;
+  SortidesBlock(Tutor tutor, int idAlumne) {
+    _tutor = tutor;
     _idAlumne = idAlumne;
     _resumSortidaListController =
         StreamController<ApiResponse<List<ResumSortida>>>();
     _notificacioRepository = NotificacionsRepository();
-    _notificacioRepository.setCurrentToken(_token);
+    _notificacioRepository.setTutorSession(_tutor);
 
     fetchSortides();
   }
@@ -35,8 +36,8 @@ class SortidesBlock {
   Future<void> fetchSortides() async {
     resumSortidaListSink.add(ApiResponse.loading(carregantSortides, []));
     try {
-      _notificacioRepository.setCurrentToken(_token);
       var dades = await _notificacioRepository.getSortides(_idAlumne);
+      _notificacioRepository.syncTutorSession(_tutor);
       resumSortidaListSink.add(ApiResponse.completed(dades));
     } catch (e) {
       resumSortidaListSink.add(ApiResponse.error(e.toString(), []));
@@ -49,11 +50,11 @@ class SortidesBlock {
   }
 
   String getToken() {
-    return _token;
+    return _tutor.token;
   }
 
-  void setToken(String token) {
-    _token = token;
-    _notificacioRepository.setCurrentToken(_token);
+  void setTutor(Tutor tutor) {
+    _tutor = tutor;
+    _notificacioRepository.setTutorSession(_tutor);
   }
 }

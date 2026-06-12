@@ -5,6 +5,7 @@ import 'package:cendrassos/api/notificacions_response.dart';
 import 'package:cendrassos/api/resum_sortides_response.dart';
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/config_djau.dart';
+import 'package:cendrassos/models/tutor.dart';
 import 'package:cendrassos/models/perfil.dart';
 import 'package:cendrassos/models/resum_sortida.dart';
 import 'package:cendrassos/models/sortida.dart';
@@ -21,6 +22,7 @@ class NotificacionsRepository {
   late final ApiBaseHelper _helper;
   Login? _lastLogin;
   String _currentToken = "";
+  String _refreshToken = "";
   bool _isRefreshing = false;
 
   NotificacionsRepository() {
@@ -37,6 +39,23 @@ class NotificacionsRepository {
 
   void setCurrentToken(String token) {
     _currentToken = token;
+  }
+
+  String get currentToken => _currentToken;
+
+  String get refreshToken => _refreshToken;
+
+  void setTutorSession(Tutor tutor) {
+    _currentToken = tutor.token;
+    _refreshToken = tutor.refreshToken;
+    if (tutor.username.isNotEmpty && tutor.password.isNotEmpty) {
+      _lastLogin = Login(tutor.username, tutor.password);
+    }
+  }
+
+  void syncTutorSession(Tutor tutor) {
+    tutor.token = _currentToken;
+    tutor.refreshToken = _refreshToken;
   }
 
   Map<String, String> getHeaders(String token) => {
@@ -57,6 +76,7 @@ class NotificacionsRepository {
     final response = await _helper.post(url, dades.toJson(), requestHeaders);
     _lastLogin = dades;
     _currentToken = response["access"];
+    _refreshToken = response[LoginResponse.refreshField] ?? _refreshToken;
 
     return LoginResponse.fromJson(response);
   }
@@ -66,18 +86,41 @@ class NotificacionsRepository {
   Future<LoginResponse> refreshTokenMethod() async {
     _logDebug('Relogin');
 
-    if (_lastLogin == null) {
-      throw UnauthorisedException(errorFentLogin);
-    }
-
     if (_isRefreshing) {
       throw UnauthorisedException(errorFentLogin);
     }
 
     _isRefreshing = true;
     try {
-      var response = await login(_lastLogin!);
+      if (_refreshToken.isNotEmpty) {
+        final response = await _helper.post(
+          tokenRefresh,
+          {LoginResponse.refreshField: _refreshToken},
+          {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          },
+        );
+        final loginResponse = LoginResponse.fromJson(response);
+        _currentToken = loginResponse.accessToken;
+        if (loginResponse.refreshToken.isNotEmpty) {
+          _refreshToken = loginResponse.refreshToken;
+        }
+        return LoginResponse(
+          accessToken: _currentToken,
+          refreshToken: _refreshToken,
+        );
+      }
+
+      if (_lastLogin == null) {
+        throw UnauthorisedException(errorFentLogin);
+      }
+
+      final response = await login(_lastLogin!);
       _currentToken = response.accessToken;
+      if (response.refreshToken.isNotEmpty) {
+        _refreshToken = response.refreshToken;
+      }
       return response;
     } finally {
       _isRefreshing = false;

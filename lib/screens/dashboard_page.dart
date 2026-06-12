@@ -133,7 +133,7 @@ class _DashBoardState extends State<Dashboard> {
     }
     _month = _focusedDay.month;
     final djau = Provider.of<DjauModel>(context, listen: false);
-    _bloc = NotificacioBloc(djau.tutor.token, djau.alumne.id);
+    _bloc = NotificacioBloc(djau.tutor, djau.alumne.id);
   }
 
   Future<void> initPlatformState() async {
@@ -218,7 +218,7 @@ class _DashBoardState extends State<Dashboard> {
   FutureOr onGoBack(dynamic value) {
     final djau = Provider.of<DjauModel>(context, listen: false);
     if (_bloc.getToken() != djau.tutor.token) {
-      _bloc.setToken(djau.tutor.token);
+      _bloc.setTutor(djau.tutor);
       _retryComunicacion();
     }
   }

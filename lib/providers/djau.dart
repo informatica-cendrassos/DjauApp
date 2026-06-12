@@ -40,7 +40,7 @@ class DjauModel with ChangeNotifier {
   String errorType = "";
 
   // Credencials d'accés a l'aplicació
-  Tutor tutor = Tutor("", "", "");
+  Tutor tutor = Tutor("", "", "", "");
 
   // Alumne actual i darrer que s'ha fet servir
   Alumne alumne = Alumne(0, "", "");
@@ -73,13 +73,15 @@ class DjauModel with ChangeNotifier {
     _logDebug('Unexpected login error: $exception');
   }
 
-  Future<void> _clearStoredSession(String username) async {
+  Future<void> _syncTutorSessionFromRepository() async {
+    _repository.syncTutorSession(tutor);
+    if (tutor.username.isEmpty) {
+      return;
+    }
     try {
-      await _prefs.clearLastLogin();
-      await _prefs.clearLastAlumne();
-      await _storage.deleteTutor(username);
+      await _storage.saveTutor(tutor);
     } catch (storageException) {
-      _logDebug('Stored session cleanup error: $storageException');
+      _logDebug('Session persistence after refresh failed: $storageException');
     }
   }
 
@@ -92,7 +94,12 @@ class DjauModel with ChangeNotifier {
     try {
       final response = await _repository.login(Login(username, password));
       // Crea les dades del tutor a partir de les credencials i el token que ens ha donat el servidor
-      tutor = Tutor.fromNow(username, password, response.accessToken);
+      tutor = Tutor.fromNow(
+        username,
+        password,
+        response.accessToken,
+        response.refreshToken,
+      );
 
       _isLogged = DjauStatus.loaded;
       errorMessage = "";
@@ -129,14 +136,13 @@ class DjauModel with ChangeNotifier {
         return LoginResult(DjauStatus.withoutUser, "", "");
       }
 
-      final result = await login(tutor.username, tutor.password);
-      final isAuthError = result.errorType
-          .trim()
-          .startsWith(notAuthorizedExceptionMessage.trim());
-      if (result.isLogged == DjauStatus.error && isAuthError) {
-        await _clearStoredSession(tutor.username);
-      }
-      return result;
+      this.tutor = tutor;
+      _repository.setTutorSession(tutor);
+      _isLogged = DjauStatus.loaded;
+      errorType = "";
+      errorMessage = "";
+      notifyListeners();
+      return LoginResult(_isLogged, errorType, errorMessage);
     } catch (e) {
       _setUnexpectedError(e);
       notifyListeners();
@@ -150,6 +156,7 @@ class DjauModel with ChangeNotifier {
   Future loadAlumne(int id) async {
     // Cridar a la llista d'alumnes associats
     var alumnes = await _repository.getAlumnesList();
+    await _syncTutorSessionFromRepository();
     var alumneTrobat = alumnes.any((a) => a.id == id);
     if (!alumneTrobat) {
       // No es pot carregar l'alumne perquè no està associat al tutor que ha entrat al sistema
@@ -209,6 +216,7 @@ class DjauModel with ChangeNotifier {
   Future<Map<int, String>> getAlumnesMap() async {
     var resultat = <int, String>{};
     var alumnes = await _repository.getAlumnesList();
+    await _syncTutorSessionFromRepository();
     for (var alumne in alumnes) {
       resultat[alumne.id] = alumne.nomComplet();
     }
@@ -222,12 +230,14 @@ class DjauModel with ChangeNotifier {
   /// Carrega el perfil de l'usuari que està actiu en aquest moment
   Future<Perfil> loadPerfil() async {
     final response = await _repository.getProfile(alumne.id);
+    await _syncTutorSessionFromRepository();
     return response;
   }
 
   // Carregar el detalla de la sortida
   Future<Sortida> loadSortida(int id, int alumneId) async {
     final response = await _repository.getSortida(id, alumneId);
+    await _syncTutorSessionFromRepository();
     return response;
   }
 }
