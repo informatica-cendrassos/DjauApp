@@ -150,34 +150,16 @@ void main() {
       test('attempts login with stored tutor credentials', () async {
         when(mockLocalStorage.getLastLogin()).thenAnswer((_) async => 'saved');
         when(mockSecureStorage.loadTutor('saved')).thenAnswer(
-          (_) async => Tutor('saved', 'pw', ''),
-        );
-        when(mockRepository.login(any)).thenAnswer(
-          (_) async => LoginResponse(accessToken: 'token_saved'),
+          (_) async => Tutor('saved', 'pw', 'token_saved', 'refresh_saved'),
         );
 
         final result = await djauModel.loginWithStoredCredentials();
 
         expect(result.isLogged, DjauStatus.loaded);
-        verify(mockRepository.login(any)).called(1);
-      });
-
-      test('clears stored session on auth error from stored credentials',
-          () async {
-        when(mockLocalStorage.getLastLogin()).thenAnswer((_) async => 'saved');
-        when(mockSecureStorage.loadTutor('saved')).thenAnswer(
-          (_) async => Tutor('saved', 'pw', ''),
-        );
-        when(mockRepository.login(any)).thenThrow(
-          UnauthorisedException('Expired credentials'),
-        );
-
-        final result = await djauModel.loginWithStoredCredentials();
-
-        expect(result.isLogged, DjauStatus.error);
-        verify(mockLocalStorage.clearLastLogin()).called(1);
-        verify(mockLocalStorage.clearLastAlumne()).called(1);
-        verify(mockSecureStorage.deleteTutor('saved')).called(1);
+        expect(djauModel.tutor.username, 'saved');
+        expect(djauModel.tutor.token, 'token_saved');
+        expect(djauModel.tutor.refreshToken, 'refresh_saved');
+        verifyNever(mockRepository.login(any));
       });
     });
 
@@ -233,6 +215,25 @@ void main() {
             .thenAnswer((_) async => <Alumne>[]);
 
         expect(() => djauModel.loadAlumne(999), throwsException);
+      });
+
+      test('syncs refreshed session back into tutor after alumnes load',
+          () async {
+        djauModel.tutor = Tutor('saved', 'pw', 'old_token', 'old_refresh');
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.syncTutorSession(any)).thenAnswer((invocation) {
+          final tutor = invocation.positionalArguments.first as Tutor;
+          tutor.token = 'new_token';
+          tutor.refreshToken = 'new_refresh';
+        });
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.tutor.token, 'new_token');
+        expect(djauModel.tutor.refreshToken, 'new_refresh');
+        verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(1);
       });
     });
   });

@@ -3,19 +3,20 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i8;
 
 import 'package:cendrassos/api/login_response.dart' as _i2;
 import 'package:cendrassos/api/notificacions_repository.dart' as _i5;
-import 'package:cendrassos/models/alumne.dart' as _i8;
-import 'package:cendrassos/models/login.dart' as _i7;
-import 'package:cendrassos/models/notificacio.dart' as _i9;
+import 'package:cendrassos/models/alumne.dart' as _i10;
+import 'package:cendrassos/models/login.dart' as _i9;
+import 'package:cendrassos/models/notificacio.dart' as _i11;
 import 'package:cendrassos/models/perfil.dart' as _i3;
-import 'package:cendrassos/models/resum_sortida.dart' as _i10;
+import 'package:cendrassos/models/resum_sortida.dart' as _i12;
 import 'package:cendrassos/models/sortida.dart' as _i4;
-import 'package:cendrassos/models/tutor.dart' as _i12;
-import 'package:cendrassos/services/storage.dart' as _i11;
+import 'package:cendrassos/models/tutor.dart' as _i7;
+import 'package:cendrassos/services/storage.dart' as _i13;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -68,6 +69,59 @@ class _FakeSortida_2 extends _i1.SmartFake implements _i4.Sortida {
 class MockNotificacionsRepository extends _i1.Mock
     implements _i5.NotificacionsRepository {
   @override
+  String get currentToken => (super.noSuchMethod(
+        Invocation.getter(#currentToken),
+        returnValue: _i6.dummyValue<String>(
+          this,
+          Invocation.getter(#currentToken),
+        ),
+        returnValueForMissingStub: _i6.dummyValue<String>(
+          this,
+          Invocation.getter(#currentToken),
+        ),
+      ) as String);
+
+  @override
+  String get refreshToken => (super.noSuchMethod(
+        Invocation.getter(#refreshToken),
+        returnValue: _i6.dummyValue<String>(
+          this,
+          Invocation.getter(#refreshToken),
+        ),
+        returnValueForMissingStub: _i6.dummyValue<String>(
+          this,
+          Invocation.getter(#refreshToken),
+        ),
+      ) as String);
+
+  @override
+  void setCurrentToken(String? token) => super.noSuchMethod(
+        Invocation.method(
+          #setCurrentToken,
+          [token],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setTutorSession(_i7.Tutor? tutor) => super.noSuchMethod(
+        Invocation.method(
+          #setTutorSession,
+          [tutor],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void syncTutorSession(_i7.Tutor? tutor) => super.noSuchMethod(
+        Invocation.method(
+          #syncTutorSession,
+          [tutor],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   Map<String, String> getHeaders(String? token) => (super.noSuchMethod(
         Invocation.method(
           #getHeaders,
@@ -78,12 +132,12 @@ class MockNotificacionsRepository extends _i1.Mock
       ) as Map<String, String>);
 
   @override
-  _i6.Future<_i2.LoginResponse> login(_i7.Login? dades) => (super.noSuchMethod(
+  _i8.Future<_i2.LoginResponse> login(_i9.Login? dades) => (super.noSuchMethod(
         Invocation.method(
           #login,
           [dades],
         ),
-        returnValue: _i6.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
+        returnValue: _i8.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
           this,
           Invocation.method(
             #login,
@@ -91,22 +145,22 @@ class MockNotificacionsRepository extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
+            _i8.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
           this,
           Invocation.method(
             #login,
             [dades],
           ),
         )),
-      ) as _i6.Future<_i2.LoginResponse>);
+      ) as _i8.Future<_i2.LoginResponse>);
 
   @override
-  _i6.Future<_i2.LoginResponse> refreshTokenMethod() => (super.noSuchMethod(
+  _i8.Future<_i2.LoginResponse> refreshTokenMethod() => (super.noSuchMethod(
         Invocation.method(
           #refreshTokenMethod,
           [],
         ),
-        returnValue: _i6.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
+        returnValue: _i8.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
           this,
           Invocation.method(
             #refreshTokenMethod,
@@ -114,28 +168,28 @@ class MockNotificacionsRepository extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
+            _i8.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
           this,
           Invocation.method(
             #refreshTokenMethod,
             [],
           ),
         )),
-      ) as _i6.Future<_i2.LoginResponse>);
+      ) as _i8.Future<_i2.LoginResponse>);
 
   @override
-  _i6.Future<List<_i8.Alumne>> getAlumnesList() => (super.noSuchMethod(
+  _i8.Future<List<_i10.Alumne>> getAlumnesList() => (super.noSuchMethod(
         Invocation.method(
           #getAlumnesList,
           [],
         ),
-        returnValue: _i6.Future<List<_i8.Alumne>>.value(<_i8.Alumne>[]),
+        returnValue: _i8.Future<List<_i10.Alumne>>.value(<_i10.Alumne>[]),
         returnValueForMissingStub:
-            _i6.Future<List<_i8.Alumne>>.value(<_i8.Alumne>[]),
-      ) as _i6.Future<List<_i8.Alumne>>);
+            _i8.Future<List<_i10.Alumne>>.value(<_i10.Alumne>[]),
+      ) as _i8.Future<List<_i10.Alumne>>);
 
   @override
-  _i6.Future<List<_i9.Notificacio>> getNotifications(
+  _i8.Future<List<_i11.Notificacio>> getNotifications(
     int? mes,
     int? idAlumne,
   ) =>
@@ -148,15 +202,15 @@ class MockNotificacionsRepository extends _i1.Mock
           ],
         ),
         returnValue:
-            _i6.Future<List<_i9.Notificacio>>.value(<_i9.Notificacio>[]),
+            _i8.Future<List<_i11.Notificacio>>.value(<_i11.Notificacio>[]),
         returnValueForMissingStub:
-            _i6.Future<List<_i9.Notificacio>>.value(<_i9.Notificacio>[]),
-      ) as _i6.Future<List<_i9.Notificacio>>);
+            _i8.Future<List<_i11.Notificacio>>.value(<_i11.Notificacio>[]),
+      ) as _i8.Future<List<_i11.Notificacio>>);
 
   @override
-  _i6.Future<bool> areNewNotifications(
+  _i8.Future<bool> areNewNotifications(
     String? token,
-    _i8.Alumne? alumne,
+    _i10.Alumne? alumne,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -166,47 +220,47 @@ class MockNotificacionsRepository extends _i1.Mock
             alumne,
           ],
         ),
-        returnValue: _i6.Future<bool>.value(false),
-        returnValueForMissingStub: _i6.Future<bool>.value(false),
-      ) as _i6.Future<bool>);
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
 
   @override
-  _i6.Future<_i3.Perfil> getProfile(int? idAlumne) => (super.noSuchMethod(
+  _i8.Future<_i3.Perfil> getProfile(int? idAlumne) => (super.noSuchMethod(
         Invocation.method(
           #getProfile,
           [idAlumne],
         ),
-        returnValue: _i6.Future<_i3.Perfil>.value(_FakePerfil_1(
+        returnValue: _i8.Future<_i3.Perfil>.value(_FakePerfil_1(
           this,
           Invocation.method(
             #getProfile,
             [idAlumne],
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i3.Perfil>.value(_FakePerfil_1(
+        returnValueForMissingStub: _i8.Future<_i3.Perfil>.value(_FakePerfil_1(
           this,
           Invocation.method(
             #getProfile,
             [idAlumne],
           ),
         )),
-      ) as _i6.Future<_i3.Perfil>);
+      ) as _i8.Future<_i3.Perfil>);
 
   @override
-  _i6.Future<List<_i10.ResumSortida>> getSortides(int? idAlumne) =>
+  _i8.Future<List<_i12.ResumSortida>> getSortides(int? idAlumne) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSortides,
           [idAlumne],
         ),
         returnValue:
-            _i6.Future<List<_i10.ResumSortida>>.value(<_i10.ResumSortida>[]),
+            _i8.Future<List<_i12.ResumSortida>>.value(<_i12.ResumSortida>[]),
         returnValueForMissingStub:
-            _i6.Future<List<_i10.ResumSortida>>.value(<_i10.ResumSortida>[]),
-      ) as _i6.Future<List<_i10.ResumSortida>>);
+            _i8.Future<List<_i12.ResumSortida>>.value(<_i12.ResumSortida>[]),
+      ) as _i8.Future<List<_i12.ResumSortida>>);
 
   @override
-  _i6.Future<_i4.Sortida> getSortida(
+  _i8.Future<_i4.Sortida> getSortida(
     int? id,
     int? alumneId,
   ) =>
@@ -218,7 +272,7 @@ class MockNotificacionsRepository extends _i1.Mock
             alumneId,
           ],
         ),
-        returnValue: _i6.Future<_i4.Sortida>.value(_FakeSortida_2(
+        returnValue: _i8.Future<_i4.Sortida>.value(_FakeSortida_2(
           this,
           Invocation.method(
             #getSortida,
@@ -228,7 +282,7 @@ class MockNotificacionsRepository extends _i1.Mock
             ],
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i4.Sortida>.value(_FakeSortida_2(
+        returnValueForMissingStub: _i8.Future<_i4.Sortida>.value(_FakeSortida_2(
           this,
           Invocation.method(
             #getSortida,
@@ -238,115 +292,115 @@ class MockNotificacionsRepository extends _i1.Mock
             ],
           ),
         )),
-      ) as _i6.Future<_i4.Sortida>);
+      ) as _i8.Future<_i4.Sortida>);
 }
 
 /// A class which mocks [DjauSecureStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDjauSecureStorage extends _i1.Mock implements _i11.DjauSecureStorage {
+class MockDjauSecureStorage extends _i1.Mock implements _i13.DjauSecureStorage {
   @override
-  _i6.Future<void> saveTutor(_i12.Tutor? tutor) => (super.noSuchMethod(
+  _i8.Future<void> saveTutor(_i7.Tutor? tutor) => (super.noSuchMethod(
         Invocation.method(
           #saveTutor,
           [tutor],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<void> deleteTutor(String? username) => (super.noSuchMethod(
+  _i8.Future<void> deleteTutor(String? username) => (super.noSuchMethod(
         Invocation.method(
           #deleteTutor,
           [username],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<dynamic> loadCurrentTutor() => (super.noSuchMethod(
+  _i8.Future<dynamic> loadCurrentTutor() => (super.noSuchMethod(
         Invocation.method(
           #loadCurrentTutor,
           [],
         ),
-        returnValue: _i6.Future<dynamic>.value(),
-        returnValueForMissingStub: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
 
   @override
-  _i6.Future<dynamic> loadTutor(String? username) => (super.noSuchMethod(
+  _i8.Future<dynamic> loadTutor(String? username) => (super.noSuchMethod(
         Invocation.method(
           #loadTutor,
           [username],
         ),
-        returnValue: _i6.Future<dynamic>.value(),
-        returnValueForMissingStub: _i6.Future<dynamic>.value(),
-      ) as _i6.Future<dynamic>);
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
 }
 
 /// A class which mocks [DjauLocalStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDjauLocalStorage extends _i1.Mock implements _i11.DjauLocalStorage {
+class MockDjauLocalStorage extends _i1.Mock implements _i13.DjauLocalStorage {
   @override
-  _i6.Future<String?> getLastLogin() => (super.noSuchMethod(
+  _i8.Future<String?> getLastLogin() => (super.noSuchMethod(
         Invocation.method(
           #getLastLogin,
           [],
         ),
-        returnValue: _i6.Future<String?>.value(),
-        returnValueForMissingStub: _i6.Future<String?>.value(),
-      ) as _i6.Future<String?>);
+        returnValue: _i8.Future<String?>.value(),
+        returnValueForMissingStub: _i8.Future<String?>.value(),
+      ) as _i8.Future<String?>);
 
   @override
-  _i6.Future<void> setLastLogin(String? username) => (super.noSuchMethod(
+  _i8.Future<void> setLastLogin(String? username) => (super.noSuchMethod(
         Invocation.method(
           #setLastLogin,
           [username],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<void> clearLastLogin() => (super.noSuchMethod(
+  _i8.Future<void> clearLastLogin() => (super.noSuchMethod(
         Invocation.method(
           #clearLastLogin,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<void> setLastAlumne(int? id) => (super.noSuchMethod(
+  _i8.Future<void> setLastAlumne(int? id) => (super.noSuchMethod(
         Invocation.method(
           #setLastAlumne,
           [id],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<void> clearLastAlumne() => (super.noSuchMethod(
+  _i8.Future<void> clearLastAlumne() => (super.noSuchMethod(
         Invocation.method(
           #clearLastAlumne,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
-  _i6.Future<int?> getLastAlumne() => (super.noSuchMethod(
+  _i8.Future<int?> getLastAlumne() => (super.noSuchMethod(
         Invocation.method(
           #getLastAlumne,
           [],
         ),
-        returnValue: _i6.Future<int?>.value(),
-        returnValueForMissingStub: _i6.Future<int?>.value(),
-      ) as _i6.Future<int?>);
+        returnValue: _i8.Future<int?>.value(),
+        returnValueForMissingStub: _i8.Future<int?>.value(),
+      ) as _i8.Future<int?>);
 }

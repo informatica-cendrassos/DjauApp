@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class FakeDjauModel extends DjauModel {
   FakeDjauModel(this._sortida) {
-    tutor = Tutor('demo', 'demo', 'token');
+    tutor = Tutor('demo', 'demo', 'token', 'refresh');
     alumne = Alumne(1, 'Nom', 'Cognoms');
   }
 
