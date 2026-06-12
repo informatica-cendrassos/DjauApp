@@ -1,4 +1,5 @@
 import 'package:cendrassos/screens/profile_page.dart';
+import 'package:cendrassos/screens/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,17 +17,23 @@ class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+
     return AppBar(
       automaticallyImplyLeading: haveleading,
-      title: Text(
-        nom,
+      title: InkWell(
+        onTap: currentRoute == Dashboard.routeName
+            ? null
+            : () => Navigator.of(context).pushNamed(Dashboard.routeName),
+        child: Text(
+          nom,
+        ),
       ),
       actions: [
         IconButton(
           icon: const Icon(Icons.account_circle_rounded),
           disabledColor: Theme.of(context).disabledColor,
-          onPressed: enableProfileButton(
-              context, ModalRoute.of(context)?.settings.name, {'nom': nom}),
+          onPressed: enableProfileButton(context, currentRoute, {'nom': nom}),
         ),
         IconButton(
           icon: const Icon(Icons.directions_bus),
@@ -45,8 +52,8 @@ class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  VoidCallback? enableProfileButton(
-      BuildContext context, String? currentRoute, Map<String, String> arguments) {
+  VoidCallback? enableProfileButton(BuildContext context, String? currentRoute,
+      Map<String, String> arguments) {
     if (currentRoute != ProfilePage.routeName) {
       return () => Navigator.of(context)
           .pushNamed(ProfilePage.routeName, arguments: arguments);
