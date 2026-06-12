@@ -102,6 +102,14 @@ var cendrassosTheme = ThemeData(
   primaryColorLight: primaryColorLight,
   primaryColorDark: primaryColorDark,
   colorScheme: colorScheme,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: primaryColor,
+      foregroundColor: Colors.white,
+      disabledBackgroundColor: primaryColor.withAlpha(170),
+      disabledForegroundColor: Colors.white70,
+    ),
+  ),
   scaffoldBackgroundColor: backgroundColor,
   canvasColor: backgroundColor,
   cardColor: backgroundColor,
