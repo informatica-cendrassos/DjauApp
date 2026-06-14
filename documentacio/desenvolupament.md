@@ -49,8 +49,7 @@ plugin de Flutter) o des de Visual Studio Code (amb el plugin de Flutter)
 
 ### Apple IOS
 
-En teoria s'hauria de poder generar l'aplicació en dispositius Apple però com
-que no en tinc cap, no ho he provat.
+En teoria s'hauria de poder generar l'aplicació en dispositius Apple però no s'ha provat per falta de dispositius.
 
 ### Generar un bundle d'Android
 

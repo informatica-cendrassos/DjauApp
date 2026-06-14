@@ -1,27 +1,33 @@
 # cendrassos
 
-Frontend de l'aplicació mòbil del Djau.
+L'aplicació funciona interactuant amb l'aplicació mòbil del programa de gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies. [Djau](https://github.com/ctrl-alt-d/django-aula).
 
-> Tot i que haria de ser possible executar-lo en Apple IOS només s'ha provat en Android.
+La idea inicial era tenir alguna forma de que els tutors dels alumnes puguin rebre notificacions en el mòbil de les incidències dels alumnes que es vagin produint.
+
+En l'aplicació permet veure el detall i les incidències de tots els alumnes de cada responsable
 
 ![androidBase](documentacio/imatges/notificacions.png)
 
-Es pot executar en Windows i Linux però el procés d'escannejar QR no està
-preparat. En aquestes plataformes s'han de fer servir usuari i contrasenya
+Les funcionalitats implementades són:
 
-## Característiques
-
-El funcionament de l'aplicació es basa en la creació d'usuaris per cada
-dispositiu que es connecta.
-
-Permet:
-
-- Mostra les notificacions en un calendari
-- Es poden verificar les dades dels tutors
-- Permet configurar diversos alumnes
+- Veure la llista de les incidències de tot el curs dels alumnes
 - Emet avisos en detectar noves incidències
+- Es poden verificar les dades dels tutors
+- Veure les sortides i pagaments dels alumnes i efectuar-ne el pagament
 
 [Més informació](documentacio/tutorial.md)
+
+## Plataformes
+
+El programa pot funcionar en diverses plataformes:
+
+- Android
+
+> Tot i que haria de ser possible executar-lo en Apple IOS només s'ha provat en Android.
+
+També es possible executar-la com una aplicació Web i com aplicacions d'escriptori en Windows i Linux.
+
+> Aquestes plataformes tenen algunes limitacions
 
 ## Configuració
 
@@ -33,11 +39,9 @@ de la configuració es poden adaptar a qualsevol altre centre)
 
 ## Compilar i executar
 
-Qualsevol canvi en la configuració o en el codi requereix recompilar de nou el programa.
-Per fer-ho cal el Flutter SDK.
+Qualsevol canvi en la configuració o en el codi requereix recompilar de nou el programa. Per fer-ho cal tenir instal·lat el Flutter SDK.
 
-Mentre s'executa el programa Flutter fa "live preview" en els canvis que es vagi fent
-des d'Android Studio o Visual Studio Code.
+Mentre s'executa el programa Flutter fa "live preview" en els canvis que es vagi fent des d'Android Studio o Visual Studio Code.
 
 [Informació](documentacio/desenvolupament.md)
 
@@ -45,7 +49,6 @@ des d'Android Studio o Visual Studio Code.
 
 Donats els constants canvis en l'API s'han generat tests en [hurl](https://github.com/Orange-OpenSource/hurl) per comprovar que el funcionament de l'API no ha canviat.
 
-En el README explica com executar-los
+En el README del directori explica com executar-los
 
 [Informació](./API%20Tests/readme.md)
-

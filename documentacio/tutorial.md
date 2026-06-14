@@ -7,36 +7,25 @@ proporcionarà el tutor.
 
 La primera vegada que s'obre l'aplicació o si no hi ha cap alumne configurat, es dirigeix a la la pantalla d'obtenir credencials:
 
-![obtenir credencials](imatges/scanqr.png)
-
-![obtenir credencials2](imatges/scanqr2.png)
-
-Amb el codi Qr i la data de naixement de l'alumne s'obtenen les credencials
-d'accés al Djau.
+![obtenir credencials](imatges/login.png)
 
 ## Llista d'alumnes
 
-Si tot va bé l'alumne es veurà en la llista d'alumnes de l'aplicació
+L'aplicació recupera la llista d'alumnes del responsable i la llista en la pantalla de canvi d'alumnes
 
 ![alumne](imatges/alumnes.png)
 
-Les credencials no són vàlides fins que el tutor les hagi validat. O sigui
-que la primera vegada encara no podrà veure les notificacions
+En cas que un responsable tingui més d'un alumne en el centre, aquesta pantalla també es fa servir per canviar d'un dels alumnes a un altre.
 
-Aquesta pantalla serveix per canviar d'alumne. Sempre està accessible en
-el menú superior
+Sempre es pot accedir a aquesta pantalla des de la barra de menú superior
 
 ![llista alumnes](imatges/alumnes-llista.png)
 
-Amb el botó del signe "+" es poden afegir més alumnes i es poden eliminar
-desplaçant l'alumne a l'esquerra
-
-![esborrar alumne](imatges/alumnes-del.png)
-
 ## Veure les notificacions
 
-Clicant sobre un dels alumnes es mostra el calendari d'un mes amb anotacions
-als dies en que hi ha hagut una notificació
+Des de qualsevol pantalla clicant sobre el nom de l'alumne que hi ha en la barra superior es va a la pantalla que  mostra el calendari amb anotacions als dies en que hi ha hagut una notificació
+
+També s'hi pot accedir des de la pantalla de selecció d'alumnes clicant sobre el nom de l'alumne
 
 ![notificacions](imatges/notificacions.png)
 
@@ -46,9 +35,39 @@ Les notificacions es poden ampliar, si cal, clicant-hi a sobre
 
 ## Dades familiars
 
-La pantalla de dades familiars sempre està disponible en el menú superior:
+La pantalla de l'alumne es fa servir per comprovar si les dades dels alumnes que té el centre són correctes o no
+
+La pantalla per comprovar les dades de l'alumne i el responsable sempre està disponible en el menú superior:
 
 ![familia-icona](imatges/familia.png)
+
+## Llistar i veure el detall de les sortides i pagaments
+
+S'accedeix a la pantalla de pagaments i sortides a través de la icona de l'autobus
+
+![menu sortides](imatges/sortides-menu.png)
+
+En la pantalla s'hi veuen les sortides i pagaments que s'han fet durant el curs.
+
+![Sortides](imatges/sortides.png)
+
+En aquesta pantalla la icona defineix si la sortida és de pagament o no ho és:
+
+| icona                   | Tipus                      |
+| ----------------------- | -------------------------- |
+| ![pagament](imatges/pagament.png) | S'ha de realitzar pagament |
+| ![gratuita](imatges/gratuita.png) | Sortida o pagament gratuit |
+
+Si la icona no és vermella és que el termini de pagament ha passat o que l'activitat ja s'ha produit.
+
+> El pagament de les sortides encara no està disponible
+
+
+Es pot veure més informació sobre l'activitat clicant-hi a sobre:
+
+![detall-sortida](imatges/sortida-detall.png)
+
+En els casos en que la sortida sigui de pagament el botó inferior permetrà fer el pagament a través de la passarela de pagaments.
 
 ## Avisos
 
