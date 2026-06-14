@@ -53,8 +53,8 @@ En la pantalla s'hi veuen les sortides i pagaments que s'han fet durant el curs.
 
 En aquesta pantalla la icona defineix si la sortida és de pagament o no ho és:
 
-| icona                   | Tipus                      |
-| ----------------------- | -------------------------- |
+| icona                             | Tipus                      |
+| --------------------------------- | -------------------------- |
 | ![pagament](imatges/pagament.png) | S'ha de realitzar pagament |
 | ![gratuita](imatges/gratuita.png) | Sortida o pagament gratuit |
 
