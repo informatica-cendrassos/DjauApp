@@ -1,4 +1,4 @@
-# cendrassos
+# Djau Cendrassos App
 
 L'aplicació funciona interactuant amb l'aplicació mòbil del programa de gestió de presència, incidències i més per a Instituts, Escoles i Acadèmies. [Djau](https://github.com/ctrl-alt-d/django-aula).
 

@@ -62,7 +62,6 @@ Si la icona no és vermella és que el termini de pagament ha passat o que l'act
 
 > El pagament de les sortides encara no està disponible
 
-
 Es pot veure més informació sobre l'activitat clicant-hi a sobre:
 
 ![detall-sortida](imatges/sortida-detall.png)

@@ -53,4 +53,4 @@ En teoria s'hauria de poder generar l'aplicació en dispositius Apple però no s
 
 ### Generar un bundle d'Android
 
-[Android] (https://docs.flutter.dev/deployment/android)
+[Android](https://docs.flutter.dev/deployment/android)
