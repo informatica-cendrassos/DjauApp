@@ -102,6 +102,12 @@ var cendrassosTheme = ThemeData(
   primaryColorLight: primaryColorLight,
   primaryColorDark: primaryColorDark,
   colorScheme: colorScheme,
+  appBarTheme: AppBarTheme(
+    backgroundColor: primaryColor,
+    foregroundColor: Colors.white,
+    iconTheme: const IconThemeData(color: Colors.white),
+    actionsIconTheme: const IconThemeData(color: Colors.white),
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: primaryColor,

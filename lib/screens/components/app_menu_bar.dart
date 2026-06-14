@@ -21,6 +21,10 @@ class AppMenuBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       automaticallyImplyLeading: haveleading,
+      backgroundColor: Theme.of(context).primaryColor,
+      foregroundColor: Colors.white,
+      iconTheme: const IconThemeData(color: Colors.white),
+      actionsIconTheme: const IconThemeData(color: Colors.white),
       title: InkWell(
         onTap: currentRoute == Dashboard.routeName
             ? null
