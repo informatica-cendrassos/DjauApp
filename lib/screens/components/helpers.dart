@@ -190,6 +190,10 @@ String convertirDataPeninsular(BuildContext context, String textData) {
 String convertirDataAmerica(BuildContext context, String textData) {
   var data = _parseFlexibleDate(textData);
 
+  return convertirDataAmericaDate(context, data);
+}
+
+String convertirDataAmericaDate(BuildContext context, DateTime data) {
   return " ${DateFormat('d MMMM hh:mm', Localizations.localeOf(context).toString()).format(data)}";
 }
 

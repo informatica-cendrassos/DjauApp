@@ -29,7 +29,11 @@ class SortidaListItem extends StatelessWidget {
         sortida.titol,
         textAlign: TextAlign.left,
       ),
-      subtitle: Text(convertirDataAmerica(context, sortida.data)),
+      subtitle: Text(
+        sortida.data.trim().isEmpty
+            ? 'Data pendent de confirmar'
+            : convertirDataAmerica(context, sortida.data),
+      ),
       trailing: calculaIcona(context),
     );
   }

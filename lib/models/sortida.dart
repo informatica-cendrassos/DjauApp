@@ -10,7 +10,7 @@ class Sortida {
   final String dataLimit;
   final bool realitzat;
 
-  static DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+  static final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
   // Personalitzar els camps de login
   static String idPagamentField = 'idPagament';
@@ -31,14 +31,20 @@ class Sortida {
       json[desdeField] as String,
       json[finsaField] as String,
       json[programaField] as String,
-      json[preuField] as String,
-      json[dataLimitField] as String,
+      (json[preuField] ?? '') as String,
+      ((json[dataLimitField] ?? '') as String).trim(),
       json[realitzatField] as bool,
       json[idPagamentField] as int?,
     );
   }
 
+  bool get hasPaymentDeadline => dataLimit.trim().isNotEmpty;
+
   bool isBefore(DateTime date) {
+    if (!hasPaymentDeadline) {
+      return false;
+    }
+
     DateTime dataLimitPagament = formatter.parse(dataLimit);
     return dataLimitPagament.isBefore(date);
   }

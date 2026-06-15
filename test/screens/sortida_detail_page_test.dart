@@ -110,5 +110,35 @@ void main() {
         expect(payButton.onPressed, isNotNull);
       },
     );
+
+    testWidgets(
+      'keeps rendering when payment deadline is missing',
+      (tester) async {
+        final sortidaSenseDeadline = Sortida(
+          'Sortida sense deadline',
+          '2020-01-10 09:00:00',
+          '2020-01-10 14:00:00',
+          'Programa',
+          '12.50',
+          '',
+          false,
+          123,
+        );
+
+        await tester.pumpWidget(
+          buildTestApp(FakeDjauModel(sortidaSenseDeadline)),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+
+        final payButtonFinder = find.widgetWithText(ElevatedButton, 'Pagar');
+        expect(payButtonFinder, findsOneWidget);
+
+        final payButton = tester.widget<ElevatedButton>(payButtonFinder);
+        expect(payButton.onPressed, isNotNull);
+        expect(find.textContaining('Data límit pel Pagament:'), findsNothing);
+      },
+    );
   });
 }

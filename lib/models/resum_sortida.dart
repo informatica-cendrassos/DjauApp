@@ -7,7 +7,7 @@ class ResumSortida {
   final bool pagament;
   final bool realitzat;
 
-  static DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+  static final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
   // Personalitzar els camps de login
   static String idField = 'id';
@@ -26,7 +26,7 @@ class ResumSortida {
 
   @override
   bool operator ==(Object other) =>
-      other is ResumSortida && 
+      other is ResumSortida &&
       other.runtimeType == runtimeType &&
       other.id == id;
 
@@ -37,25 +37,30 @@ class ResumSortida {
     return ResumSortida(
       json[idField] as int,
       json[titolField] as String,
-      json[dataField] as String,
+      ((json[dataField] ?? '') as String).trim(),
       json[pagamentField] as bool,
       json[realitzatField] as bool,
     );
   }
 
-  
+  bool get hasDate => data.trim().isNotEmpty;
+
   bool isBefore(DateTime date) {
+    if (!hasDate) {
+      return false;
+    }
+
     DateTime dataSortida = formatter.parse(data);
     return dataSortida.isBefore(date);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data[idField] = id;
-    data[titolField] = titol;
-    data[dataField] = data;
-    data[pagamentField] = pagament;
-    data[realitzatField] = realitzat;
-    return data;
+    final Map<String, dynamic> dades = <String, dynamic>{};
+    dades[idField] = id;
+    dades[titolField] = titol;
+    dades[dataField] = data;
+    dades[pagamentField] = pagament;
+    dades[realitzatField] = realitzat;
+    return dades;
   }
 }

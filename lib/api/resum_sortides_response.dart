@@ -13,7 +13,7 @@ class ResumSortidesResponse {
     totalResults = received.length;
     results = [];
     // El primer resultat és basura!
-    for (var element in received.skip(1)) {
+    for (var element in received) {
       results.add(ResumSortida.fromJson(element));
     }
   }

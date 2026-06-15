@@ -263,7 +263,8 @@ class SortidaDescription extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(sortida.programa),
-                  if (sortida.idPagament != null) ...[
+                  if (sortida.idPagament != null &&
+                      sortida.hasPaymentDeadline) ...[
                     const SizedBox(height: 16),
                     Text(
                       "Data límit pel Pagament:\n  ${convertirDataAmerica(context, sortida.dataLimit)}",
