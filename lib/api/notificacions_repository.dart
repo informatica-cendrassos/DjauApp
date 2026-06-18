@@ -75,10 +75,13 @@ class NotificacionsRepository {
 
     final response = await _helper.post(url, dades.toJson(), requestHeaders);
     _lastLogin = dades;
-    _currentToken = response["access"];
-    _refreshToken = response[LoginResponse.refreshField] ?? _refreshToken;
+    final loginResponse = LoginResponse.fromJson(response);
+    _currentToken = loginResponse.accessToken;
+    if (loginResponse.refreshToken.isNotEmpty) {
+      _refreshToken = loginResponse.refreshToken;
+    }
 
-    return LoginResponse.fromJson(response);
+    return loginResponse;
   }
 
   // Refresh del token, que es fa quan el client rep un 401, i que després es pot usar per a les altres crides
@@ -93,23 +96,33 @@ class NotificacionsRepository {
     _isRefreshing = true;
     try {
       if (_refreshToken.isNotEmpty) {
-        final response = await _helper.post(
-          tokenRefresh,
-          {LoginResponse.refreshField: _refreshToken},
-          {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          },
-        );
-        final loginResponse = LoginResponse.fromJson(response);
-        _currentToken = loginResponse.accessToken;
-        if (loginResponse.refreshToken.isNotEmpty) {
-          _refreshToken = loginResponse.refreshToken;
+        try {
+          final response = await _helper.post(
+            tokenRefresh,
+            {LoginResponse.refreshField: _refreshToken},
+            {
+              'Content-type': 'application/json',
+              'Accept': 'application/json',
+            },
+          );
+          final loginResponse = LoginResponse.fromJson(response);
+          _currentToken = loginResponse.accessToken;
+          if (loginResponse.refreshToken.isNotEmpty) {
+            _refreshToken = loginResponse.refreshToken;
+          }
+          return LoginResponse(
+            accessToken: _currentToken,
+            refreshToken: _refreshToken,
+          );
+        } on UnauthorisedException catch (error) {
+          _logDebug(
+            'Refresh token rejected. Trying login fallback. ${error.message()}',
+          );
+        } on BadRequestException catch (error) {
+          _logDebug(
+            'Refresh token bad request. Trying login fallback. ${error.message()}',
+          );
         }
-        return LoginResponse(
-          accessToken: _currentToken,
-          refreshToken: _refreshToken,
-        );
       }
 
       if (_lastLogin == null) {

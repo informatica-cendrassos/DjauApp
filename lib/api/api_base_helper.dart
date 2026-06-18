@@ -50,14 +50,29 @@ class ApiBaseHelper {
             }
 
             var result = await relogin();
-            if (result is Map && result.containsKey('access')) {
-              newToken = result['access'] as String;
+            if (result is Map) {
+              final dynamic mapToken = result['access'] ?? result['token'];
+              newToken = mapToken is String ? mapToken : '';
             } else {
-              newToken = result.accessToken as String;
+              final dynamic objectToken = result.accessToken;
+              if (objectToken is String && objectToken.isNotEmpty) {
+                newToken = objectToken;
+              } else {
+                final dynamic legacyObjectToken = result.token;
+                newToken = legacyObjectToken is String ? legacyObjectToken : '';
+              }
             }
 
             if (newToken.isNotEmpty) {
               request.headers['Authorization'] = '$bearerText $newToken';
+              _logDebug(
+                'Retry with refreshed token for ${request.method} ${request.url.path} '
+                '(length=${newToken.length})',
+              );
+            } else {
+              _logDebug(
+                'Retry skipped token update for ${request.method} ${request.url.path}: empty refreshed token',
+              );
             }
           }
         });
