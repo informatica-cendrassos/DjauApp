@@ -38,8 +38,13 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 HTTP 200
+
+# [Asserts]
+# Hurl 7.x no admet && als filtres JSONPath; usem regex sobre el JSON.
+# regex /"pagament":\s*true[^}]*"realitzat":\s*false/ exists
+
 [Captures]
-sortidaPagamentPendent: jsonpath "$[?(@.pagament == true && @.realitzat == false)].id" first
+sortidaPagamentPendent: regex /"id":\s*(\d+)[^}]*"pagament":\s*true[^}]*"realitzat":\s*false/
 
 
 # Recupera el detall i l'idPagament de la sortida pendent
