@@ -11,7 +11,6 @@ import '../screens/dashboard_page.dart';
 import '../screens/login_page.dart';
 
 class GlobalNavigator {
-
   static void gotoLoginPageWithPop() {
     var context = navigatorKey.currentContext!;
     Navigator.of(context).popUntil((route) => route.isFirst);
@@ -27,15 +26,15 @@ class GlobalNavigator {
     final djau = Provider.of<DjauModel>(context, listen: false);
     try {
       await djau.loadAlumne(id);
-      GlobalNavigator.go(Dashboard.routeName);      
+      GlobalNavigator.go(Dashboard.routeName);
     } catch (e) {
       GlobalNavigator.showAlertDialog(
           "S'ha produït un error en carregar l'alumne: $e");
     }
   }
 
-  static Future<void> gotoSortidaDetail(BuildContext context, int id) async {
-    GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
+  static Future<Object?> gotoSortidaDetail(BuildContext context, int id) {
+    return GlobalNavigator.goToId(SortidaDetailPage.routeName, id);
   }
 
   static Future<Object?> forgetAndGo(String initialRoute) =>

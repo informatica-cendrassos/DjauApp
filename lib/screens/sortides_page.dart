@@ -140,8 +140,12 @@ class _SortidesPageState extends State<SortidesPage> {
     );
   }
 
-  void _showDetails(BuildContext context, int id) async {
-    GlobalNavigator.gotoSortidaDetail(context, id);
+  Future<void> _showDetails(BuildContext context, int id) async {
+    await GlobalNavigator.gotoSortidaDetail(context, id);
+    if (!mounted) {
+      return;
+    }
+    _retryComunicacion();
   }
 
   Widget buildLlistaSortides(List<ResumSortida> sortides) {
