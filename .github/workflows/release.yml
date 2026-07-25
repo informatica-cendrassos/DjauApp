@@ -1,0 +1,54 @@
+name: Release App Bundle
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    if: startsWith(github.event.head_commit.message, 'Nova Versió:')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codi
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Instal·lar dependències
+        run: flutter pub get
+
+      - name: Passar els tests
+        run: flutter test
+
+      - name: Descodificar el KeyStore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+
+      - name: Crear key.properties
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=key0
+          storeFile=keystore.jks
+          EOF
+
+      - name: Generar App Bundle
+        run: flutter build appbundle --release
+
+      - name: Pujar l'App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-bundle
+          path: build/app/outputs/bundle/release/app-release.aab
