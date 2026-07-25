@@ -40,7 +40,7 @@ jobs:
           cat > android/key.properties <<EOF
           storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          keyAlias=key0
+          keyAlias=upload
           storeFile=keystore.jks
           EOF
 
