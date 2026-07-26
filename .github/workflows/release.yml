@@ -23,7 +23,7 @@ jobs:
       - name: Extreure versió de pubspec.yaml
         id: app
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | head -n1 | cut -d' ' -f2 | cut -d'+' -f1)
+          VERSION=$(grep '^version:' pubspec.yaml | head -n1 | awk '{print $2}')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Obtenir darrera release
@@ -35,7 +35,7 @@ jobs:
               const { owner, repo } = context.repo;
               const { data } = await github.rest.repos.getLatestRelease({ owner, repo });
               const tag = data.tag_name || "";
-              const version = tag.replace(/^v/, "").split("+")[0];
+              const version = tag.replace(/^v/, "");
               core.setOutput("tag", tag);
               core.setOutput("version", version);
             } catch (error) {
