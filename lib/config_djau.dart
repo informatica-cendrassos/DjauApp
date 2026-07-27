@@ -19,12 +19,12 @@ const int intervalNotificacions =
 // Comprovar que el text és el que arriba en la notificació. Si en calen
 // més, s'afegeixen.
 Map<String, Color> notificacionsColor = {
-  "Falta": const Color(0xFF00BCD4),
+  "Falta": const Color.fromARGB(255, 255, 155, 8),
   "Retard": const Color.fromARGB(255, 197, 196, 123),
-  "Justificada": const Color(0xFF4CAF50),
-  "Incidència": const Color(0xFFFF9800),
+  "Justificada": const Color.fromARGB(255, 255, 240, 195),
+  "Incidència": const Color.fromARGB(255, 225, 142, 162),
   "Expulsió": const Color(0xFFF44336),
-  "Observació": const Color.fromARGB(255, 197, 116, 190),
+  "Observació": const Color(0xFF4CAF50),
 };
 
 // Textos del programa
