@@ -17,8 +17,8 @@ jobs:
       version: ${{ steps.compare.outputs.version }}
 
     steps:
-      - name: Checkout codi
-        uses: actions/checkout@v4
+      - name: Clonar el repositori
+        uses: actions/checkout@v7
 
       - name: Extreure versió de pubspec.yaml
         id: app
@@ -67,8 +67,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout codi
-        uses: actions/checkout@v4
+      - name: Clonar el repositori
+        uses: actions/checkout@v7
 
       - name: Configurar Java
         uses: actions/setup-java@v4
