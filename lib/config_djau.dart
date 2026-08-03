@@ -5,9 +5,9 @@ const String appName = "Cendrassos";
 // Dades del centre
 const String nomInstitut = "Institut Cendrassos";
 // URL del Djau de proves
-const String baseUrl = "https://djauproves.cendrassos.net";
+// const String baseUrl = "https://djauproves.cendrassos.net";
 // URL del Djau en producció
-// const String baseUrl = "https://djau.cendrassos.net";
+const String baseUrl = "https://djau.cendrassos.net";
 
 // Mesos d'inici i final del curs
 const int mesIniciCurs = 9;
@@ -23,7 +23,10 @@ Map<String, Color> notificacionsColor = {
   "Retard": const Color.fromARGB(255, 197, 196, 123),
   "Justificada": const Color.fromARGB(255, 255, 240, 195),
   "Incidència": const Color.fromARGB(255, 225, 142, 162),
+  "Falta lleu": const Color.fromARGB(255, 225, 142, 162),
   "Expulsió": const Color(0xFFF44336),
+  "Falta greu": const Color(0xFFF44336),
+  "Sanció": const Color.fromARGB(255, 73, 4, 11),
   "Observació": const Color(0xFF4CAF50),
 };
 
@@ -46,7 +49,8 @@ const String missatgeCarregantDades = "Carregant dades";
 const String missatgeTornaAProvar = "Torna-ho a provar";
 const String missatgeTornaALogin = 'Entrar credencials de nou';
 const String missatgeOk = "D'acord";
-const String missatgeEliminant = "No es pot eliminar l'alumne. Contacteu amb el tutor si hi ha algun error";
+const String missatgeEliminant =
+    "No es pot eliminar l'alumne. Contacteu amb el tutor si hi ha algun error";
 
 const String defaultErrorMessage = "ERROR";
 const String undefinedError = "Hi ha hagut un error indeterminat";
@@ -69,11 +73,6 @@ const String invalidInputExceptionMessage = "Entrada incorrecta: ";
 // La URL ha d'acabar amb una barra
 const String endBaseUrl = "/";
 
-// Es fa login amb codis QR?
-const bool loginWithQR = true;
-
-// API QR Login
-const String qrToken = "/api/token/capture_token_api";
 // API Login
 const String pathLogin = "/api-token-auth";
 const String tokenRefresh = "/api-token-refresh";
