@@ -49,3 +49,6 @@ app.*.map.json
 .zhistory
 android/app/local.properties
 android/app/.gradle/config.properties
+
+skills-lock.json
+.agents
