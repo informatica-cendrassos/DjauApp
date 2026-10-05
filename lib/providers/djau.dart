@@ -45,6 +45,9 @@ class DjauModel with ChangeNotifier {
   // Alumne actual i darrer que s'ha fet servir
   Alumne alumne = Alumne(0, "", "");
 
+  bool _isQualitativeEvaluationVisible = false;
+  Object? _qualitativeEvaluationVisibilityError;
+
   /// Constructor amb dependency injection
   /// Permet testejar injectant mocks per a repository, storage, i prefs
   DjauModel({
@@ -57,6 +60,9 @@ class DjauModel with ChangeNotifier {
 
   bool isLogged() => _isLogged == DjauStatus.loaded;
   bool isError() => _isLogged == DjauStatus.error;
+  bool get isQualitativeEvaluationVisible => _isQualitativeEvaluationVisible;
+  Object? get qualitativeEvaluationVisibilityError =>
+      _qualitativeEvaluationVisibilityError;
 
   void _setErrorFromAppException(AppException exception) {
     _isLogged = DjauStatus.error;
@@ -82,6 +88,20 @@ class DjauModel with ChangeNotifier {
       await _storage.saveTutor(tutor);
     } catch (storageException) {
       _logDebug('Session persistence after refresh failed: $storageException');
+    }
+  }
+
+  Future<void> _loadQualitativeEvaluationVisibility() async {
+    _isQualitativeEvaluationVisible = false;
+    _qualitativeEvaluationVisibilityError = null;
+
+    try {
+      _isQualitativeEvaluationVisible =
+          await _repository.isQualitativeEvaluationVisible(alumne.id);
+      await _syncTutorSessionFromRepository();
+    } catch (error) {
+      _qualitativeEvaluationVisibilityError = error;
+      _logDebug('Error loading qualitative evaluation visibility: $error');
     }
   }
 
@@ -164,6 +184,7 @@ class DjauModel with ChangeNotifier {
     }
     alumne = alumnes.firstWhere((a) => a.id == id);
     _prefs.setLastAlumne(alumne.id);
+    await _loadQualitativeEvaluationVisibility();
     notifyListeners();
   }
 

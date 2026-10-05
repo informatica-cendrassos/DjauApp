@@ -42,6 +42,9 @@ void main() {
       when(mockLocalStorage.setLastAlumne(any)).thenAnswer((_) async {});
       when(mockLocalStorage.clearLastAlumne()).thenAnswer((_) async {});
 
+      when(mockRepository.isQualitativeEvaluationVisible(any))
+          .thenAnswer((_) async => false);
+
       djauModel = DjauModel(
         repository: mockRepository,
         storage: mockSecureStorage,
@@ -223,17 +226,71 @@ void main() {
         when(mockRepository.getAlumnesList()).thenAnswer(
           (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
         );
+        var syncCalls = 0;
         when(mockRepository.syncTutorSession(any)).thenAnswer((invocation) {
+          syncCalls++;
           final tutor = invocation.positionalArguments.first as Tutor;
-          tutor.token = 'new_token';
-          tutor.refreshToken = 'new_refresh';
+          if (syncCalls == 2) {
+            tutor.token = 'new_token';
+            tutor.refreshToken = 'new_refresh';
+          }
         });
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => true);
 
         await djauModel.loadAlumne(7);
 
         expect(djauModel.tutor.token, 'new_token');
         expect(djauModel.tutor.refreshToken, 'new_refresh');
-        verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(1);
+        expect(djauModel.isQualitativeEvaluationVisible, isTrue);
+        expect(djauModel.qualitativeEvaluationVisibilityError, isNull);
+        verify(mockRepository.isQualitativeEvaluationVisible(7)).called(1);
+        verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(2);
+      });
+
+      test('keeps qualitative evaluation unavailable when the API returns no',
+          () async {
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => false);
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.isQualitativeEvaluationVisible, isFalse);
+        expect(djauModel.qualitativeEvaluationVisibilityError, isNull);
+      });
+
+      test('keeps selected pupil available when qualitative visibility fails',
+          () async {
+        final error = UnauthorisedException('Token caducat');
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7)).thenThrow(error);
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.alumne.id, 7);
+        expect(djauModel.isQualitativeEvaluationVisible, isFalse);
+        expect(djauModel.qualitativeEvaluationVisibilityError, same(error));
+      });
+
+      test('checks qualitative visibility when restoring the default pupil',
+          () async {
+        when(mockLocalStorage.getLastAlumne()).thenAnswer((_) async => 7);
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => true);
+
+        await djauModel.loadDefaultAlumne();
+
+        expect(djauModel.alumne.id, 7);
+        expect(djauModel.isQualitativeEvaluationVisible, isTrue);
+        verify(mockRepository.isQualitativeEvaluationVisible(7)).called(1);
       });
     });
   });
