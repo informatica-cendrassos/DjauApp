@@ -82,6 +82,8 @@ const String pathAlumnes = "/api/token/alumnes_associats/";
 const String pathNotificacions = "/api/token/notificacions/mes";
 const String pathNews = "/api/token/notificacions/news";
 const String pathProfile = "/api/token/alumnes/dades";
+const String pathQualitativaVisible = "/api/token/alumnes/qualitativa_visible";
+const String pathQualitativaPdf = "/api/token/alumnes/qualitativa_pdf";
 const String pathSortides = "/api/token/sortides";
 const String pathPagamentSortides = "/sortides/pagoOnlineApi/";
 
