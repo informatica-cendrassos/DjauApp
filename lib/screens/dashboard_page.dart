@@ -11,6 +11,7 @@ import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/services/background_tasks.dart';
+import 'package:cendrassos/services/qualitative_evaluation_pdf.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -239,10 +240,17 @@ class _DashBoardState extends State<Dashboard> {
 
     return Scaffold(
       appBar: AppMenuBar(
-          nom: nom,
-          haveleading: false,
-          gotoUserPage: gotoUserPage,
-          gotoSortides: gotoSortides),
+        nom: nom,
+        haveleading: false,
+        gotoUserPage: gotoUserPage,
+        gotoSortides: gotoSortides,
+        qualitativeEvaluationVisible:
+            currentLogin.isQualitativeEvaluationVisible,
+        onQualitativeEvaluation: () => downloadAndOpenQualitativeEvaluationPdf(
+          currentLogin.downloadQualitativeEvaluationPdf,
+          currentLogin.alumne.id,
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () => _bloc.fetchNotificacions(_month),
         child: StreamBuilder<ApiResponse<List<Notificacio>>>(

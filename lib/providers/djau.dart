@@ -105,6 +105,12 @@ class DjauModel with ChangeNotifier {
     }
   }
 
+  Object? takeQualitativeEvaluationVisibilityError() {
+    final error = _qualitativeEvaluationVisibilityError;
+    _qualitativeEvaluationVisibilityError = null;
+    return error;
+  }
+
   /// Entrar en el sistema a través d'usuari [username] i
   /// contrasenya [password]. Es fa servir quan s'intenta fer login contra
   /// el servidor
@@ -251,6 +257,13 @@ class DjauModel with ChangeNotifier {
   /// Carrega el perfil de l'usuari que està actiu en aquest moment
   Future<Perfil> loadPerfil() async {
     final response = await _repository.getProfile(alumne.id);
+    await _syncTutorSessionFromRepository();
+    return response;
+  }
+
+  Future<Uint8List> downloadQualitativeEvaluationPdf() async {
+    final response =
+        await _repository.downloadQualitativeEvaluationPdf(alumne.id);
     await _syncTutorSessionFromRepository();
     return response;
   }

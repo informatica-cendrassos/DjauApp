@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/api/login_response.dart';
 import 'package:cendrassos/api/notificacions_repository.dart';
@@ -291,6 +293,27 @@ void main() {
         expect(djauModel.alumne.id, 7);
         expect(djauModel.isQualitativeEvaluationVisible, isTrue);
         verify(mockRepository.isQualitativeEvaluationVisible(7)).called(1);
+      });
+    });
+
+    group('downloadQualitativeEvaluationPdf', () {
+      test('syncs the session after downloading the PDF', () async {
+        djauModel.tutor = Tutor('saved', 'pw', 'old_token', 'old_refresh');
+        final pdf = Uint8List.fromList([37, 80, 68, 70]);
+        when(mockRepository.downloadQualitativeEvaluationPdf(0))
+            .thenAnswer((_) async => pdf);
+        when(mockRepository.syncTutorSession(any)).thenAnswer((invocation) {
+          final tutor = invocation.positionalArguments.first as Tutor;
+          tutor.token = 'new_token';
+          tutor.refreshToken = 'new_refresh';
+        });
+
+        final result = await djauModel.downloadQualitativeEvaluationPdf();
+
+        expect(result, pdf);
+        expect(djauModel.tutor.token, 'new_token');
+        expect(djauModel.tutor.refreshToken, 'new_refresh');
+        verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(1);
       });
     });
   });

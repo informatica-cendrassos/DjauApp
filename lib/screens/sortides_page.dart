@@ -11,6 +11,7 @@ import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/components/sortida_list_item.dart';
 import 'package:cendrassos/screens/users_page.dart';
 import 'package:cendrassos/utils/global_navigator.dart';
+import 'package:cendrassos/services/qualitative_evaluation_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
@@ -108,10 +109,17 @@ class _SortidesPageState extends State<SortidesPage> {
 
     return Scaffold(
       appBar: AppMenuBar(
-          nom: nom,
-          haveleading: true,
-          gotoUserPage: gotoUserPage,
-          gotoSortides: null),
+        nom: nom,
+        haveleading: true,
+        gotoUserPage: gotoUserPage,
+        gotoSortides: null,
+        qualitativeEvaluationVisible:
+            currentLogin.isQualitativeEvaluationVisible,
+        onQualitativeEvaluation: () => downloadAndOpenQualitativeEvaluationPdf(
+          currentLogin.downloadQualitativeEvaluationPdf,
+          currentLogin.alumne.id,
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () => _bloc.fetchSortides(),
         child: StreamBuilder<ApiResponse<List<ResumSortida>>>(
