@@ -22,7 +22,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 [Asserts]
 jsonpath "$" count > 0
 jsonpath "$[0].nom" exists

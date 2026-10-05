@@ -25,7 +25,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 GET https://{{host}}/api/token/notificacions/mes/25/{{alumneId}}/
