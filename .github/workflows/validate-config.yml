@@ -1,0 +1,21 @@
+name: Validate config
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check baseUrl
+        run: |
+          FILE="lib/config_djau.dart"
+          PATTERN='const String baseUrl = "https://djauproves.cendrassos.net"'
+          if grep -F "$PATTERN" "$FILE" 2>/dev/null | grep -qv '^[[:space:]]*//'; then
+            echo "::error::baseUrl de proves no pot estar actiu a main"
+            exit 1
+          fi
