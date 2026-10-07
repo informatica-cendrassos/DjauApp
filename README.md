@@ -22,10 +22,8 @@ Les funcionalitats implementades són:
 El programa pot funcionar en diverses plataformes:
 
 - Android
-
-> Tot i que haria de ser possible executar-lo en Apple IOS només s'ha provat en Android.
-
-També es possible executar-la com una aplicació Web i com aplicacions d'escriptori en Windows i Linux.
+- IOS: **Properament**
+- També es possible executar-la com una aplicació Web i com aplicacions d'escriptori en Windows i Linux.
 
 > Aquestes plataformes tenen algunes limitacions
 
