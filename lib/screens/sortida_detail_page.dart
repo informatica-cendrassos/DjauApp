@@ -9,6 +9,7 @@ import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/payment_web_view_widget.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
+import 'package:cendrassos/services/qualitative_evaluation_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +95,7 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final djau = Provider.of<DjauModel>(context, listen: false);
+    final djau = context.watch<DjauModel>();
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{}) as Map;
 
@@ -106,6 +107,11 @@ class _SortidaDetailPageState extends State<SortidaDetailPage> {
             {Navigator.of(context).pushNamed(UsersPage.routeName)},
         gotoSortides: () =>
             {Navigator.of(context).pushNamed(SortidesPage.routeName)},
+        qualitativeEvaluationVisible: djau.isQualitativeEvaluationVisible,
+        onQualitativeEvaluation: () => downloadAndOpenQualitativeEvaluationPdf(
+          djau.downloadQualitativeEvaluationPdf,
+          djau.alumne.id,
+        ),
       ),
       body: _paymentUrl != null && _token != null
           ? PaymentWebViewWidget(url: _paymentUrl!, token: _token!)

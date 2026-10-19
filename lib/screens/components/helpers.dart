@@ -1,4 +1,5 @@
 import 'package:cendrassos/config_djau.dart';
+import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
@@ -38,6 +39,27 @@ Widget previewLoadingWidget() => previewWithTheme(
     );
 
 void _noop() {}
+
+Future<void> showAppErrorDialog(BuildContext context, Object error) {
+  final errorType =
+      error is AppException ? error.prefix().trim() : defaultErrorMessage;
+  final errorMessage =
+      error is AppException ? error.message().trim() : undefinedError;
+
+  return showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(errorType.isEmpty ? defaultErrorMessage : errorType),
+      content: Text(errorMessage.isEmpty ? undefinedError : errorMessage),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text(missatgeOk),
+        ),
+      ],
+    ),
+  );
+}
 
 class ErrorRetry extends StatelessWidget {
   final String errorType;

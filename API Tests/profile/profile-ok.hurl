@@ -28,7 +28,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 # Comprova que pot recuperar dades de l'alumne associat
 # ------------------------------------------------------------------------------

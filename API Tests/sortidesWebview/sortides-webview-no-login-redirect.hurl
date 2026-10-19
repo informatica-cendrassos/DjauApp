@@ -28,7 +28,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 # Busca una sortida amb pagament pendent (pagament=true, realitzat=false)

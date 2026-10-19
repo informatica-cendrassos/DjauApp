@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
+import 'dart:typed_data' as _i12;
 
 import 'package:cendrassos/api/login_response.dart' as _i2;
 import 'package:cendrassos/api/notificacions_repository.dart' as _i5;
@@ -11,10 +12,10 @@ import 'package:cendrassos/models/alumne.dart' as _i10;
 import 'package:cendrassos/models/login.dart' as _i9;
 import 'package:cendrassos/models/notificacio.dart' as _i11;
 import 'package:cendrassos/models/perfil.dart' as _i3;
-import 'package:cendrassos/models/resum_sortida.dart' as _i12;
+import 'package:cendrassos/models/resum_sortida.dart' as _i13;
 import 'package:cendrassos/models/sortida.dart' as _i4;
 import 'package:cendrassos/models/tutor.dart' as _i7;
-import 'package:cendrassos/services/storage.dart' as _i13;
+import 'package:cendrassos/services/storage.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 
@@ -247,17 +248,40 @@ class MockNotificacionsRepository extends _i1.Mock
       ) as _i8.Future<_i3.Perfil>);
 
   @override
-  _i8.Future<List<_i12.ResumSortida>> getSortides(int? idAlumne) =>
+  _i8.Future<bool> isQualitativeEvaluationVisible(int? idAlumne) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isQualitativeEvaluationVisible,
+          [idAlumne],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  _i8.Future<_i12.Uint8List> downloadQualitativeEvaluationPdf(int? idAlumne) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #downloadQualitativeEvaluationPdf,
+          [idAlumne],
+        ),
+        returnValue: _i8.Future<_i12.Uint8List>.value(_i12.Uint8List(0)),
+        returnValueForMissingStub:
+            _i8.Future<_i12.Uint8List>.value(_i12.Uint8List(0)),
+      ) as _i8.Future<_i12.Uint8List>);
+
+  @override
+  _i8.Future<List<_i13.ResumSortida>> getSortides(int? idAlumne) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSortides,
           [idAlumne],
         ),
         returnValue:
-            _i8.Future<List<_i12.ResumSortida>>.value(<_i12.ResumSortida>[]),
+            _i8.Future<List<_i13.ResumSortida>>.value(<_i13.ResumSortida>[]),
         returnValueForMissingStub:
-            _i8.Future<List<_i12.ResumSortida>>.value(<_i12.ResumSortida>[]),
-      ) as _i8.Future<List<_i12.ResumSortida>>);
+            _i8.Future<List<_i13.ResumSortida>>.value(<_i13.ResumSortida>[]),
+      ) as _i8.Future<List<_i13.ResumSortida>>);
 
   @override
   _i8.Future<_i4.Sortida> getSortida(
@@ -298,7 +322,7 @@ class MockNotificacionsRepository extends _i1.Mock
 /// A class which mocks [DjauSecureStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDjauSecureStorage extends _i1.Mock implements _i13.DjauSecureStorage {
+class MockDjauSecureStorage extends _i1.Mock implements _i14.DjauSecureStorage {
   @override
   _i8.Future<void> saveTutor(_i7.Tutor? tutor) => (super.noSuchMethod(
         Invocation.method(
@@ -343,7 +367,7 @@ class MockDjauSecureStorage extends _i1.Mock implements _i13.DjauSecureStorage {
 /// A class which mocks [DjauLocalStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDjauLocalStorage extends _i1.Mock implements _i13.DjauLocalStorage {
+class MockDjauLocalStorage extends _i1.Mock implements _i14.DjauLocalStorage {
   @override
   _i8.Future<String?> getLastLogin() => (super.noSuchMethod(
         Invocation.method(

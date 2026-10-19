@@ -38,8 +38,8 @@ class ApiBaseHelper {
   late RetryClient client;
   late String newToken;
 
-  ApiBaseHelper(Function relogin) {
-    client = RetryClient(http.Client(),
+  ApiBaseHelper(Function relogin, {http.Client? httpClient}) {
+    client = RetryClient(httpClient ?? http.Client(),
         when: (response) => response.statusCode == 401,
         onRetry: (request, response, retryCount) async {
           if (retryCount == 0 && response?.statusCode == 401) {
@@ -130,6 +130,25 @@ class ApiBaseHelper {
           await client.post(url, body: jsonEncode(body), headers: headers);
       var responseJson = _returnResponse(response);
       return responseJson;
+    } on SocketException {
+      _logDebug('No net');
+      throw FetchDataException(noInternet);
+    } on NoSuchMethodError catch (e) {
+      _logDebug(e.toString());
+      throw FetchDataException("El servidor rebutja la petició");
+    }
+  }
+
+  Future<Uint8List> getBytes(String path, [dynamic headers]) async {
+    _logDebug('Api Get bytes, url $path');
+    headers ??= {};
+    try {
+      final response = await client.get(createUrl(path), headers: headers);
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      }
+      _returnResponse(response);
+      throw FetchDataException('El servidor ha retornat una resposta invàlida');
     } on SocketException {
       _logDebug('No net');
       throw FetchDataException(noInternet);
