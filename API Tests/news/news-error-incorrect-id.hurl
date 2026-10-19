@@ -24,7 +24,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 # ------------ CAS 1: alumne real ----------------------------

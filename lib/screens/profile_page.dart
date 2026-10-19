@@ -7,6 +7,7 @@ import 'package:cendrassos/screens/components/helpers.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/users_page.dart';
+import 'package:cendrassos/services/qualitative_evaluation_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:provider/provider.dart';
@@ -168,7 +169,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final djau = Provider.of<DjauModel>(context, listen: false);
+    final djau = context.watch<DjauModel>();
 
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{}) as Map;
@@ -181,6 +182,11 @@ class ProfilePage extends StatelessWidget {
             {Navigator.of(context).pushNamed(UsersPage.routeName)},
         gotoSortides: () =>
             {Navigator.of(context).pushNamed(SortidesPage.routeName)},
+        qualitativeEvaluationVisible: djau.isQualitativeEvaluationVisible,
+        onQualitativeEvaluation: () => downloadAndOpenQualitativeEvaluationPdf(
+          djau.downloadQualitativeEvaluationPdf,
+          djau.alumne.id,
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -24,7 +24,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 # Recupera les incidèncuies de l'alumne d'un mes concret
@@ -35,6 +35,6 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Asserts]
-jsonpath "$.[0].id" exists
-# jsonpath "$.[0].darrera_sincronitzacio" exists
+jsonpath "$[0].id" exists
+# jsonpath "$[0].darrera_sincronitzacio" exists
 

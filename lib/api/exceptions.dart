@@ -39,3 +39,8 @@ class InvalidInputException extends AppException {
   InvalidInputException([String? message])
       : super(message, invalidInputExceptionMessage);
 }
+
+class OpenDocumentException extends AppException {
+  OpenDocumentException([String? message])
+      : super(message, defaultErrorMessage);
+}

@@ -66,6 +66,17 @@ class _LoadingPageState extends State<LoadingPage> {
         if (djau.isLogged()) {
           try {
             await djau.loadDefaultAlumne();
+            if (!mounted) {
+              return;
+            }
+            final visibilityError =
+                djau.takeQualitativeEvaluationVisibilityError();
+            if (visibilityError != null) {
+              await showAppErrorDialog(context, visibilityError);
+              if (!mounted) {
+                return;
+              }
+            }
             initialRoute = Dashboard.routeName;
           } catch (e) {
             // No s'ha pogut carregar l'alumne per defecte,

@@ -30,7 +30,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 # Recupera la llista de sortides de l'alumne
@@ -45,7 +45,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-sortidaOk: jsonpath "$.[0].id"
+sortidaOk: jsonpath "$[0].id"
 
 
 # Comprova que pot recuperar les dades d'una sortida concreta

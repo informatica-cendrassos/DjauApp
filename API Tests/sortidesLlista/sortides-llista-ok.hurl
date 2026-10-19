@@ -27,7 +27,7 @@ Authorization: Bearer {{token}}
 
 HTTP 200
 [Captures]
-alumneId: jsonpath "$.[0].id"
+alumneId: jsonpath "$[0].id"
 
 
 # Obtenir la llista de sortides de l'alumne especificat

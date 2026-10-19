@@ -1,6 +1,7 @@
 import 'package:cendrassos/screens/sortides_page.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
 import 'package:cendrassos/api/exceptions.dart';
+import 'package:cendrassos/services/qualitative_evaluation_pdf.dart';
 
 import '../config_djau.dart';
 import 'components/helpers.dart';
@@ -119,6 +120,16 @@ class _UsersPageState extends State<UsersPage> {
     final djau = Provider.of<DjauModel>(context, listen: false);
     try {
       await djau.loadAlumne(idAlumne);
+      if (!context.mounted) {
+        return;
+      }
+      final visibilityError = djau.takeQualitativeEvaluationVisibilityError();
+      if (visibilityError != null) {
+        await showAppErrorDialog(context, visibilityError);
+        if (!mounted) {
+          return;
+        }
+      }
       // TODO: No sé si fer popuntil?
       GlobalNavigator.go(Dashboard.routeName);
     } catch (e) {
@@ -136,10 +147,16 @@ class _UsersPageState extends State<UsersPage> {
 
     return Scaffold(
       appBar: AppMenuBar(
-          nom: nom,
-          haveleading: true,
-          gotoUserPage: null,
-          gotoSortides: gotoSortidesPage),
+        nom: nom,
+        haveleading: true,
+        gotoUserPage: null,
+        gotoSortides: gotoSortidesPage,
+        qualitativeEvaluationVisible: model.isQualitativeEvaluationVisible,
+        onQualitativeEvaluation: () => downloadAndOpenQualitativeEvaluationPdf(
+          model.downloadQualitativeEvaluationPdf,
+          model.alumne.id,
+        ),
+      ),
       body: _isLoading
           ? const Loading(
               loadingMessage: missatgeCarregantDades,

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/api/login_response.dart';
 import 'package:cendrassos/api/notificacions_repository.dart';
@@ -41,6 +43,9 @@ void main() {
       when(mockLocalStorage.getLastAlumne()).thenAnswer((_) async => null);
       when(mockLocalStorage.setLastAlumne(any)).thenAnswer((_) async {});
       when(mockLocalStorage.clearLastAlumne()).thenAnswer((_) async {});
+
+      when(mockRepository.isQualitativeEvaluationVisible(any))
+          .thenAnswer((_) async => false);
 
       djauModel = DjauModel(
         repository: mockRepository,
@@ -223,14 +228,89 @@ void main() {
         when(mockRepository.getAlumnesList()).thenAnswer(
           (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
         );
+        var syncCalls = 0;
+        when(mockRepository.syncTutorSession(any)).thenAnswer((invocation) {
+          syncCalls++;
+          final tutor = invocation.positionalArguments.first as Tutor;
+          if (syncCalls == 2) {
+            tutor.token = 'new_token';
+            tutor.refreshToken = 'new_refresh';
+          }
+        });
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => true);
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.tutor.token, 'new_token');
+        expect(djauModel.tutor.refreshToken, 'new_refresh');
+        expect(djauModel.isQualitativeEvaluationVisible, isTrue);
+        expect(djauModel.qualitativeEvaluationVisibilityError, isNull);
+        verify(mockRepository.isQualitativeEvaluationVisible(7)).called(1);
+        verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(2);
+      });
+
+      test('keeps qualitative evaluation unavailable when the API returns no',
+          () async {
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => false);
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.isQualitativeEvaluationVisible, isFalse);
+        expect(djauModel.qualitativeEvaluationVisibilityError, isNull);
+      });
+
+      test('keeps selected pupil available when qualitative visibility fails',
+          () async {
+        final error = UnauthorisedException('Token caducat');
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7)).thenThrow(error);
+
+        await djauModel.loadAlumne(7);
+
+        expect(djauModel.alumne.id, 7);
+        expect(djauModel.isQualitativeEvaluationVisible, isFalse);
+        expect(djauModel.qualitativeEvaluationVisibilityError, same(error));
+      });
+
+      test('checks qualitative visibility when restoring the default pupil',
+          () async {
+        when(mockLocalStorage.getLastAlumne()).thenAnswer((_) async => 7);
+        when(mockRepository.getAlumnesList()).thenAnswer(
+          (_) async => <Alumne>[Alumne(7, 'Nom', 'Cognoms')],
+        );
+        when(mockRepository.isQualitativeEvaluationVisible(7))
+            .thenAnswer((_) async => true);
+
+        await djauModel.loadDefaultAlumne();
+
+        expect(djauModel.alumne.id, 7);
+        expect(djauModel.isQualitativeEvaluationVisible, isTrue);
+        verify(mockRepository.isQualitativeEvaluationVisible(7)).called(1);
+      });
+    });
+
+    group('downloadQualitativeEvaluationPdf', () {
+      test('syncs the session after downloading the PDF', () async {
+        djauModel.tutor = Tutor('saved', 'pw', 'old_token', 'old_refresh');
+        final pdf = Uint8List.fromList([37, 80, 68, 70]);
+        when(mockRepository.downloadQualitativeEvaluationPdf(0))
+            .thenAnswer((_) async => pdf);
         when(mockRepository.syncTutorSession(any)).thenAnswer((invocation) {
           final tutor = invocation.positionalArguments.first as Tutor;
           tutor.token = 'new_token';
           tutor.refreshToken = 'new_refresh';
         });
 
-        await djauModel.loadAlumne(7);
+        final result = await djauModel.downloadQualitativeEvaluationPdf();
 
+        expect(result, pdf);
         expect(djauModel.tutor.token, 'new_token');
         expect(djauModel.tutor.refreshToken, 'new_refresh');
         verify(mockSecureStorage.saveTutor(djauModel.tutor)).called(1);

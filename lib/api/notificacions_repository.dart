@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cendrassos/api/login_response.dart';
 import 'package:cendrassos/api/news_response.dart';
 import 'package:cendrassos/api/notificacions_response.dart';
+import 'package:cendrassos/api/qualitativa_visible_response.dart';
 import 'package:cendrassos/api/resum_sortides_response.dart';
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/config_djau.dart';
@@ -178,6 +179,25 @@ class NotificacionsRepository {
 
     final response = await _helper.get(url, getHeaders(_currentToken));
     return Perfil.fromJson(response);
+  }
+
+  Future<bool> isQualitativeEvaluationVisible(int idAlumne) async {
+    final response = await _helper.get(
+      "$pathQualitativaVisible/$idAlumne",
+      getHeaders(_currentToken),
+    );
+    return QualitativaVisibleResponse.fromJson(
+      Map<String, dynamic>.from(response as Map),
+    ).isVisible;
+  }
+
+  Future<Uint8List> downloadQualitativeEvaluationPdf(int idAlumne) {
+    final headers = getHeaders(_currentToken);
+    headers['Accept'] = 'application/pdf';
+    return _helper.getBytes(
+      "$pathQualitativaPdf/$idAlumne",
+      headers,
+    );
   }
 
 // Sortides
