@@ -1,6 +1,7 @@
 import 'package:cendrassos/config_djau.dart';
 import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/screens/components/preview_helpers.dart';
+import 'package:cendrassos/utils/global_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +41,9 @@ Widget previewLoadingWidget() => previewWithTheme(
 
 void _noop() {}
 
+bool _isUnauthorised(String errorType) =>
+    errorType.trim() == notAuthorizedExceptionMessage.trim();
+
 Future<void> showAppErrorDialog(BuildContext context, Object error) {
   final errorType =
       error is AppException ? error.prefix().trim() : defaultErrorMessage;
@@ -52,6 +56,14 @@ Future<void> showAppErrorDialog(BuildContext context, Object error) {
       title: Text(errorType.isEmpty ? defaultErrorMessage : errorType),
       content: Text(errorMessage.isEmpty ? undefinedError : errorMessage),
       actions: [
+        if (error is UnauthorisedException)
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              GlobalNavigator.gotoLoginPageWithPop();
+            },
+            child: const Text(missatgeTornaALogin),
+          ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text(missatgeOk),
@@ -109,6 +121,13 @@ class ErrorRetry extends StatelessWidget {
               child: const Text(
                 missatgeOk,
               )),
+          if (_isUnauthorised(errorType)) ...[
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: GlobalNavigator.gotoLoginPageWithPop,
+              child: const Text(missatgeTornaALogin),
+            ),
+          ],
         ],
       ),
     );
