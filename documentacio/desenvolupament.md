@@ -1,5 +1,9 @@
 # Compilar i executar l'aplicació
 
+Per compilar Android, utilitzeu Flutter 3.50.0 i Java 21, les mateixes
+versions que el workflow de release. Gradle es descarrega amb el wrapper del
+projecte. Cal també la plataforma Android SDK 37 per compilar les dependències.
+
 Per executar l'aplicació:
 
 Clonar el repositori
