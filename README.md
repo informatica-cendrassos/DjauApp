@@ -49,4 +49,4 @@ Donats els constants canvis en l'API s'han generat tests en [hurl](https://githu
 
 En el README del directori explica com executar-los
 
-[Informació](./API%20Tests/readme.md)
+[Informació](./API%20Tests/Readme.md)
