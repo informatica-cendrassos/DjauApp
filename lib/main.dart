@@ -22,16 +22,15 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
     // This task has exceeded its allowed running-time.
     // You must stop what you're doing and immediately .finish(taskId)
     debugPrint("[BackgroundFetch] Headless task timed-out: $taskId");
-    BackgroundFetch.finish(taskId);
+    await BackgroundFetch.finish(taskId);
     return;
   }
   debugPrint('[BackgroundFetch] Headless event received.');
 
-  var tasca = BackgroundTask();
-  await tasca.checkNewNotificacions(onNotification);
-
-  BackgroundFetch.finish(taskId);
-  debugPrint('[BackgroundFetch] Headless event finished.');
+  await runBackgroundFetch(
+    taskId,
+    () => BackgroundTask().checkNewNotificacions(onNotification),
+  );
 }
 
 void onNotification(String? payload) async {

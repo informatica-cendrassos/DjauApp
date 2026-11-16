@@ -156,15 +156,15 @@ class _DashBoardState extends State<Dashboard> {
       // <-- Event handler
       // Arriba l'event
       log("[BackgroundFetch] Event received $taskId");
-      BackgroundTask background = BackgroundTask();
-      await background.checkNewNotificacions(onNotification);
-      // IMPORTANT:  Informar el SO de que s'ha acabat
-      BackgroundFetch.finish(taskId);
+      await runBackgroundFetch(
+        taskId,
+        () => BackgroundTask().checkNewNotificacions(onNotification),
+      );
     }, (String taskId) async {
       // <-- Task timeout handler.
       // Ha tardat massa
       log("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
-      BackgroundFetch.finish(taskId);
+      await BackgroundFetch.finish(taskId);
     });
     log('[BackgroundFetch] configure success: $status');
     setState(() {});
