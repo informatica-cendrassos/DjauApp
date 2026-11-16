@@ -11,6 +11,7 @@ import 'package:cendrassos/models/perfil.dart';
 import 'package:cendrassos/models/resum_sortida.dart';
 import 'package:cendrassos/models/sortida.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/alumne.dart';
 import '../models/login.dart';
@@ -26,8 +27,8 @@ class NotificacionsRepository {
   String _refreshToken = "";
   bool _isRefreshing = false;
 
-  NotificacionsRepository() {
-    _helper = ApiBaseHelper(refreshTokenMethod);
+  NotificacionsRepository({http.Client? httpClient}) {
+    _helper = ApiBaseHelper(refreshTokenMethod, httpClient: httpClient);
   }
 
   static String bearerText = "Bearer";
@@ -165,13 +166,15 @@ class NotificacionsRepository {
   // ------------------------------------------------------
   Future<bool> areNewNotifications(String token, Alumne alumne) async {
     var url = "$pathNews/${alumne.id}";
-    try {
-      final response = await _helper.get(url, getHeaders(token));
-      _logDebug("Result $response");
-      return NewsResponse.fromJson(response).resultIs("Sí");
-    } catch (e) {
+    final response = await _helper.get(url, getHeaders(token));
+    final news = NewsResponse.fromJson(response);
+    if (news.resultIs("Sí")) {
+      return true;
+    }
+    if (news.resultIs("No")) {
       return false;
     }
+    throw const FormatException('Resposta de novetats invàlida');
   }
 
   Future<Perfil> getProfile(int idAlumne) async {

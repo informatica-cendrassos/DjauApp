@@ -34,6 +34,40 @@ class BackgroundTask {
   DjauLocalStorage prefs = DjauLocalStorage();
   DjauSecureStorage storage;
 
+  Future<T> _withTutorSync<T>(
+    Tutor tutor,
+    Future<T> Function() operation,
+  ) async {
+    var operationFailed = false;
+    try {
+      return await operation();
+    } catch (_) {
+      operationFailed = true;
+      rethrow;
+    } finally {
+      if (tutor.token != api.currentToken ||
+          tutor.refreshToken != api.refreshToken) {
+        try {
+          final updatedTutor = Tutor.fromNow(
+            tutor.username,
+            tutor.password,
+            api.currentToken,
+            api.refreshToken,
+          );
+          await storage.saveTutor(updatedTutor);
+          api.syncTutorSession(tutor);
+        } catch (error, stackTrace) {
+          if (!operationFailed) rethrow;
+          debugPrint(
+            '[BackgroundFetch] Failed to save refreshed session '
+            '(${error.runtimeType}).',
+          );
+          debugPrintStack(stackTrace: stackTrace);
+        }
+      }
+    }
+  }
+
   Future<void> checkNewNotificacions(dynamic Function(String? p) goto) async {
     debugPrint('[BackgroundFetch] Loading session.');
     final Tutor? tutor = await storage.loadCurrentTutor();
@@ -46,21 +80,19 @@ class BackgroundTask {
     await manager.initNotificationManager(goto);
     api.setTutorSession(tutor);
     debugPrint('[BackgroundFetch] Loading pupils.');
-    // Per cada alumne associat al tutor, comprovar si hi ha notificacions noves, i si n'hi ha, mostrar una notificació
-    var alumnes = await api.getAlumnesList(); // No sé si fer-ho o no
+    final alumnes = await _withTutorSync(tutor, api.getAlumnesList);
     debugPrint('[BackgroundFetch] Checking for new notifications.');
-    for (var i = 0; i < alumnes.length; i++) {
-      if (await api.areNewNotifications(api.currentToken, alumnes[i])) {
+    for (final alumne in alumnes) {
+      final hasNews = await _withTutorSync(
+        tutor,
+        () => api.areNewNotifications(api.currentToken, alumne),
+      );
+      debugPrint(
+          '[BackgroundFetch] New notifications: ${hasNews ? 'yes' : 'no'}.');
+      if (hasNews) {
         debugPrint('[BackgroundFetch] Displaying a notification.');
-        await manager.showNotification(alumnes[i].id, alumnes[i].nomComplet());
+        await manager.showNotification(alumne.id, alumne.nomComplet());
       }
     }
-    final updatedTutor = Tutor.fromNow(
-      tutor.username,
-      tutor.password,
-      api.currentToken,
-      api.refreshToken,
-    );
-    await storage.saveTutor(updatedTutor);
   }
 }
