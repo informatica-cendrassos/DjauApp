@@ -29,6 +29,19 @@ Per executar tots els tests:
 ./run-tests.sh
 ```
 
+Per mostrar per pantalla les respostes de l'API:
+
+```bash
+./run-tests.sh --show-response
+```
+
+L'opció també es pot combinar amb un domini o un fitxer de prova:
+
+```bash
+./run-tests.sh --show-response news
+./run-tests.sh profile/profile-ok.hurl --show-response
+```
+
 Es demanarà l'usuari i la contrasenya (la contrasenya no es mostra en pantalla):
 
 ```log
@@ -68,7 +81,7 @@ Failed files:    0 (0.0%)
 Duration:        4500 ms
 ```
 
-En l'execució es poden veure a què són deguts els errors ja que al afegir `--error-format=long` mostra les capçaleres i el contingut de la resposta rebuda.
+L'opció `--show-response` activa la sortida molt detallada de Hurl, que inclou les respostes HTTP. Aquesta sortida pot contenir dades retornades per l'API. En cas d'error, `--error-format=long` també mostra informació detallada de la resposta rebuda.
 
 ## Executar les proves d'un sol domini
 

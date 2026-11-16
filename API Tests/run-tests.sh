@@ -3,11 +3,12 @@
 # ============================================================================
 # Executa els tests Hurl de l'API del Djau
 #
-# Ús: ./run-tests.sh [--verbose] [domini|fitxer.hurl ...]
+# Ús: ./run-tests.sh [--verbose] [--show-response] [domini|fitxer.hurl ...]
 #
 # Exemples:
 #   ./run-tests.sh                         # executa tots els tests
 #   ./run-tests.sh --verbose               # executa tots els tests amb sortida detallada de hurl
+#   ./run-tests.sh --show-response         # mostra les respostes de l'API
 #   ./run-tests.sh news                    # executa els tests del domini 'news'
 #   ./run-tests.sh profile news            # executa els dominis 'profile' i 'news'
 #   ./run-tests.sh profile/profile-ok.hurl # executa un sol test
@@ -37,13 +38,14 @@ echo
 
 # Parseja flags opcionals i conserva els objectius de test
 verbose_enabled=false
+show_response_enabled=false
 target_args=()
 for arg in "$@"; do
-    if [[ "${arg}" == "--verbose" ]]; then
-        verbose_enabled=true
-    else
-        target_args+=("${arg}")
-    fi
+    case "${arg}" in
+        --verbose) verbose_enabled=true ;;
+        --show-response) show_response_enabled=true ;;
+        *) target_args+=("${arg}") ;;
+    esac
 done
 
 # Determina quins tests cal executar
@@ -77,16 +79,19 @@ echo "==========================================================================
 echo "Executant ${#test_targets[@]} test(s)..."
 echo "============================================================================"
 
-# Executa hurl amb les credencials injectades per variable
+# Marca les credencials interactives com a secretes perquè Hurl les oculti amb --very-verbose.
+hurl_password_variable=password
 hurl_args=(
     --test
     --variables-file "${VARS_FILE}"
-    --variable "username=${username}"
-    --secret "password=${password}"
+    --secret "username=${username}"
+    --secret "${hurl_password_variable}=${password}"
     --error-format=long
 )
 
-if [[ "${verbose_enabled}" == true ]]; then
+if [[ "${show_response_enabled}" == true ]]; then
+    hurl_args+=(--very-verbose)
+elif [[ "${verbose_enabled}" == true ]]; then
     hurl_args+=(--verbose)
 fi
 
