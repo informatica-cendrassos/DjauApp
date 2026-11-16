@@ -72,7 +72,7 @@ jsonpath "$.idPagament" != null
 
 # Carregar la pàgina de pagament de la sortida (si no està realitzada)
 
-GET https://djauproves.cendrassos.net/sortides/pagoOnlineApi/{{idPagament}}/
+GET https://{{host}}/sortides/pagoOnlineApi/{{idPagament}}/
 Content-Type: text/html
 Authorization: Bearer {{token}}
 

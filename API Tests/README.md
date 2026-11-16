@@ -13,7 +13,7 @@ Abans d'executar els tests cal tenir jocs de proves correctes:
 - Id que no és una sortida (suposo que el que ja hi ha mai existirà)
 - Els valors inexistents són improvisats ja que no se me n'ha proporcionat cap, però haurien de funcionar.
 
-S'edita el fitxer `vars.env` i, si cal, s'hi canvia el host on està instal·lat el programa:
+El fitxer `vars.env` conté el host per defecte i la resta de variables de prova:
 
 ```ini
 host=djauproves.cendrassos.net
@@ -28,6 +28,15 @@ Per executar tots els tests:
 ```bash
 ./run-tests.sh
 ```
+
+Per seleccionar el servidor sense modificar `vars.env`:
+
+```bash
+./run-tests.sh --server test news
+./run-tests.sh --server production profile/profile-ok.hurl
+```
+
+`test` fa servir `djauproves.cendrassos.net` i `production`, `djau.cendrassos.net`. Sense `--server` s'utilitza el host de `vars.env`. Les altres variables continuen venint d'aquest fitxer. Tingues en compte que les proves contra producció poden afectar dades reals.
 
 Per mostrar per pantalla les respostes de l'API:
 
