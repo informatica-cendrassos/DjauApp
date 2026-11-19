@@ -1,5 +1,6 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:cendrassos/api/notificacions_repository.dart';
+import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/models/tutor.dart';
 import 'package:cendrassos/services/notifications_manager.dart';
 import 'package:cendrassos/services/storage.dart';
@@ -41,8 +42,14 @@ class BackgroundTask {
     var operationFailed = false;
     try {
       return await operation();
-    } catch (_) {
+    } catch (error) {
       operationFailed = true;
+      if (error is FetchDataException) {
+        debugPrint(
+          '[BackgroundFetch] Network error during operation: '
+          '${error.message()}',
+        );
+      }
       rethrow;
     } finally {
       if (tutor.token != api.currentToken ||
