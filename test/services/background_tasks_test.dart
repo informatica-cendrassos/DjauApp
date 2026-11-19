@@ -61,7 +61,7 @@ void main() {
       }
     });
 
-    test('saves refreshed tokens when the retried news request fails',
+    test('saves refreshed tokens when the notification check retries and fails',
         () async {
       final storage = _SessionStorage(Tutor('user', 'pass', 'old', 'refresh'));
       final task = BackgroundTask(storage: storage)
@@ -84,10 +84,7 @@ void main() {
           }),
         );
 
-      await expectLater(
-        task.checkNewNotificacions((_) {}),
-        throwsA(isA<FetchDataException>()),
-      );
+      await task.checkNewNotificacions((_) {});
       expect(storage.savedTutors, hasLength(1));
       expect(storage.savedTutors.single.token, 'new');
       expect(storage.savedTutors.single.refreshToken, 'new-refresh');

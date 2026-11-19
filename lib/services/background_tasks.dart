@@ -30,10 +30,34 @@ class BackgroundTask {
   BackgroundTask({DjauSecureStorage? storage})
       : storage = storage ?? DjauSecureStorage();
 
+  static const int _maxRetries = 3;
+  static const Duration _retryDelay = Duration(milliseconds: 500);
+
   NotificationManager manager = NotificationManager();
   NotificacionsRepository api = NotificacionsRepository();
   DjauLocalStorage prefs = DjauLocalStorage();
   DjauSecureStorage storage;
+
+  Future<T> _retryWithBackoff<T>(
+    Future<T> Function() operation, {
+    int retryCount = 0,
+  }) async {
+    try {
+      return await operation();
+    } on FetchDataException catch (error) {
+      if (retryCount < _maxRetries) {
+        debugPrint(
+          '[BackgroundFetch] Retry ${retryCount + 1}/$_maxRetries after network error',
+        );
+        await Future.delayed(_retryDelay);
+        return _retryWithBackoff(operation, retryCount: retryCount + 1);
+      }
+      debugPrint(
+        '[BackgroundFetch] Max retries reached. ${error.message()}',
+      );
+      rethrow;
+    }
+  }
 
   Future<T> _withTutorSync<T>(
     Tutor tutor,
@@ -87,18 +111,29 @@ class BackgroundTask {
     await manager.initNotificationManager(goto);
     api.setTutorSession(tutor);
     debugPrint('[BackgroundFetch] Loading pupils.');
-    final alumnes = await _withTutorSync(tutor, api.getAlumnesList);
+    final alumnes = await _retryWithBackoff(
+      () => _withTutorSync(tutor, api.getAlumnesList),
+    );
     debugPrint('[BackgroundFetch] Checking for new notifications.');
     for (final alumne in alumnes) {
-      final hasNews = await _withTutorSync(
-        tutor,
-        () => api.areNewNotifications(api.currentToken, alumne),
-      );
-      debugPrint(
-          '[BackgroundFetch] New notifications: ${hasNews ? 'yes' : 'no'}.');
-      if (hasNews) {
-        debugPrint('[BackgroundFetch] Displaying a notification.');
-        await manager.showNotification(alumne.id, alumne.nomComplet());
+      try {
+        final hasNews = await _retryWithBackoff(
+          () => _withTutorSync(
+            tutor,
+            () => api.areNewNotifications(api.currentToken, alumne),
+          ),
+        );
+        debugPrint(
+            '[BackgroundFetch] New notifications: ${hasNews ? 'yes' : 'no'}.');
+        if (hasNews) {
+          debugPrint('[BackgroundFetch] Displaying a notification.');
+          await manager.showNotification(alumne.id, alumne.nomComplet());
+        }
+      } catch (error) {
+        debugPrint(
+          '[BackgroundFetch] Failed to check notifications for '
+          '${alumne.nomComplet()} (${error.runtimeType}).',
+        );
       }
     }
   }
