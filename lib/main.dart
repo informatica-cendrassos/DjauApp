@@ -7,6 +7,7 @@ import 'package:cendrassos/services/background_tasks.dart';
 import 'package:cendrassos/services/storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -52,12 +53,29 @@ Future<void> _configureLocalTimeZone() async {
   tz.setLocalLocation(tz.getLocation(timezoneInfo.identifier));
 }
 
+Future<void> _configureScreenOrientation() async {
+  if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
+    return;
+  }
+
+  final view = WidgetsBinding.instance.platformDispatcher.views.first;
+  final shortestSide = view.physicalSize.shortestSide / view.devicePixelRatio;
+  if (shortestSide < 600) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+}
+
 Future<void> main() async {
   String initialRoute = LoadingPage.routeName;
 
   // ✅ CRÍTICA: Inicialitzar Flutter Binding PRIMER
   // Necessari per accedir a SharedPreferences, platform channels, etc.
   WidgetsFlutterBinding.ensureInitialized();
+
+  await _configureScreenOrientation();
 
   // ✅ Configurar timezone
   await _configureLocalTimeZone();
