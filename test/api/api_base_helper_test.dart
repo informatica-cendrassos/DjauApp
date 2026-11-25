@@ -1,10 +1,105 @@
+import 'dart:io';
+
 import 'package:cendrassos/api/api_base_helper.dart';
+import 'package:cendrassos/api/exceptions.dart';
 import 'package:cendrassos/api/login_response.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('ApiBaseHelper network failures', () {
+    test('classifies client errors without logging their sensitive contents',
+        () async {
+      final messages = <String>[];
+      final previousDebugPrint = debugPrint;
+      debugPrint = (String? message, {int? wrapWidth}) {
+        if (message != null) messages.add(message);
+      };
+      final helper = ApiBaseHelper(
+        () async => {'access': 'new'},
+        httpClient: MockClient((request) async {
+          throw http.ClientException(
+            'Connection closed before full header; secret-token',
+            Uri.parse('https://example.com/?token=secret-token'),
+          );
+        }),
+      );
+      try {
+        await expectLater(
+          helper.get('/example', <String, String>{}),
+          throwsA(isA<FetchDataException>()
+              .having((error) => error.retryable, 'retryable', isTrue)),
+        );
+      } finally {
+        debugPrint = previousDebugPrint;
+      }
+
+      expect(messages.join('\n'),
+          contains('category=connection_closed_before_headers'));
+      expect(messages.join('\n'), isNot(contains('secret-token')));
+    });
+
+    test('reports POST failures as non-retryable', () async {
+      final helper = ApiBaseHelper(
+        () async => {'access': 'new'},
+        httpClient: MockClient((request) async {
+          throw http.ClientException('failure');
+        }),
+      );
+
+      await expectLater(
+        helper.post(
+            '/api-token-refresh', {'refresh': 'secret'}, <String, String>{}),
+        throwsA(isA<FetchDataException>()
+            .having((error) => error.retryable, 'retryable', isFalse)),
+      );
+    });
+
+    test('reports socket error codes without logging their messages', () async {
+      final messages = <String>[];
+      final previousDebugPrint = debugPrint;
+      debugPrint = (String? message, {int? wrapWidth}) {
+        if (message != null) messages.add(message);
+      };
+      final helper = ApiBaseHelper(
+        () async => {'access': 'new'},
+        httpClient: MockClient((request) async {
+          throw const SocketException('secret',
+              osError: OSError('secret', 101));
+        }),
+      );
+      try {
+        await expectLater(
+          helper.get('/example', <String, String>{}),
+          throwsA(isA<FetchDataException>()
+              .having((error) => error.retryable, 'retryable', isTrue)),
+        );
+      } finally {
+        debugPrint = previousDebugPrint;
+      }
+
+      expect(messages.join('\n'), contains('category=socket, os_error=101'));
+      expect(messages.join('\n'), isNot(contains('secret')));
+    });
+
+    test('handles client errors when downloading bytes', () async {
+      final helper = ApiBaseHelper(
+        () async => {'access': 'new'},
+        httpClient: MockClient((request) async {
+          throw http.ClientException('failure');
+        }),
+      );
+
+      await expectLater(
+        helper.getBytes('/example', <String, String>{}),
+        throwsA(isA<FetchDataException>()
+            .having((error) => error.retryable, 'retryable', isTrue)),
+      );
+    });
+  });
+
   group('ApiBaseHelper.isAuthEndpointPath', () {
     test('accepts login path with or without trailing slash', () {
       expect(ApiBaseHelper.isAuthEndpointPath('/api-token-auth'), isTrue);

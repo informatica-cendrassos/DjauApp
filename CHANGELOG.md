@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Afegeix diagnòstics de xarxa sense exposar els missatges d'error i reintenta les consultes de notificacions quan és segur.
+
 ## [v1.0.0](https://github.com-utrescu/utrescu/cendrassosapp/compare/v0.9.0...v1.0.0) (2023-10-12)
 
 ### Added

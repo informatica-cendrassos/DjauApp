@@ -21,8 +21,10 @@ class AppException implements Exception {
 }
 
 class FetchDataException extends AppException {
-  FetchDataException([String? message])
+  FetchDataException([String? message, this.retryable = true])
       : super(message, communicationExceptionMessage);
+
+  final bool retryable;
 }
 
 class BadRequestException extends AppException {

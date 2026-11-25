@@ -61,6 +61,74 @@ void main() {
       }
     });
 
+    test('retries a failed GET and completes when the connection recovers',
+        () async {
+      var requests = 0;
+      final task = BackgroundTask(
+          storage: _SessionStorage(Tutor('user', 'pass', 'access', 'refresh')))
+        ..manager = _RecordingNotificationManager()
+        ..api = NotificacionsRepository(
+          httpClient: MockClient((request) async {
+            requests++;
+            if (requests == 1) throw http.ClientException('connection reset');
+            return http.Response('[]', 200);
+          }),
+        );
+
+      await task.checkNewNotificacions((_) {});
+      expect(requests, 2);
+    });
+
+    test('stops retrying a GET after the configured limit', () async {
+      var requests = 0;
+      final task = BackgroundTask(
+          storage: _SessionStorage(Tutor('user', 'pass', 'access', 'refresh')))
+        ..manager = _RecordingNotificationManager()
+        ..api = NotificacionsRepository(
+          httpClient: MockClient((request) async {
+            requests++;
+            throw http.ClientException('connection reset');
+          }),
+        );
+
+      await expectLater(
+        task.checkNewNotificacions((_) {}),
+        throwsA(isA<FetchDataException>()),
+      );
+      expect(requests, 4);
+    });
+
+    for (final failure in ['client', 'server']) {
+      test('does not retry an uncertain refresh $failure failure', () async {
+        var pupilsRequests = 0;
+        var refreshRequests = 0;
+        final task = BackgroundTask(
+            storage: _SessionStorage(Tutor('user', 'pass', 'old', 'refresh')))
+          ..manager = _RecordingNotificationManager()
+          ..api = NotificacionsRepository(
+            httpClient: MockClient((request) async {
+              if (request.url.path.contains('api-token-refresh')) {
+                refreshRequests++;
+                if (failure == 'client') {
+                  throw http.ClientException('connection closed');
+                }
+                return http.Response('{"detail":"server error"}', 500);
+              }
+              pupilsRequests++;
+              return http.Response('{"detail":"expired"}', 401);
+            }),
+          );
+
+        await expectLater(
+          task.checkNewNotificacions((_) {}),
+          throwsA(isA<FetchDataException>()
+              .having((error) => error.retryable, 'retryable', isFalse)),
+        );
+        expect(pupilsRequests, 1);
+        expect(refreshRequests, 1);
+      });
+    }
+
     test('saves refreshed tokens when the notification check retries and fails',
         () async {
       final storage = _SessionStorage(Tutor('user', 'pass', 'old', 'refresh'));

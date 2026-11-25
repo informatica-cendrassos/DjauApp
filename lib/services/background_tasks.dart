@@ -45,6 +45,10 @@ class BackgroundTask {
     try {
       return await operation();
     } on FetchDataException catch (error) {
+      if (!error.retryable) {
+        debugPrint('[BackgroundFetch] Request not retried: outcome uncertain.');
+        rethrow;
+      }
       if (retryCount < _maxRetries) {
         debugPrint(
           '[BackgroundFetch] Retry ${retryCount + 1}/$_maxRetries after network error',
@@ -52,9 +56,7 @@ class BackgroundTask {
         await Future.delayed(_retryDelay);
         return _retryWithBackoff(operation, retryCount: retryCount + 1);
       }
-      debugPrint(
-        '[BackgroundFetch] Max retries reached. ${error.message()}',
-      );
+      debugPrint('[BackgroundFetch] Max retries reached.');
       rethrow;
     }
   }
@@ -70,8 +72,7 @@ class BackgroundTask {
       operationFailed = true;
       if (error is FetchDataException) {
         debugPrint(
-          '[BackgroundFetch] Network error during operation: '
-          '${error.message()}',
+          '[BackgroundFetch] Communication error during operation.',
         );
       }
       rethrow;

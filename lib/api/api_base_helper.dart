@@ -89,6 +89,36 @@ class ApiBaseHelper {
   static const String noInternet =
       "Hi ha problemes per accedir a la xarxa. Proveu-ho més tard";
 
+  static String _clientErrorCategory(http.ClientException error) {
+    final message = error.message.toLowerCase();
+    if (message.contains('connection closed before full header')) {
+      return 'connection_closed_before_headers';
+    }
+    if (message.contains('connection reset')) return 'connection_reset';
+    if (message.contains('connection refused')) return 'connection_refused';
+    if (message.contains('timed out')) return 'timeout';
+    if (message.contains('certificate')) return 'certificate';
+    if (message.contains('handshake')) return 'handshake';
+    return 'client_error';
+  }
+
+  static FetchDataException _networkError(
+    String method,
+    String path,
+    String category, {
+    int? osErrorCode,
+  }) {
+    final endpoint = _normalizePath(path) == _normalizePath(tokenRefresh)
+        ? 'token_refresh'
+        : _normalizePath(path) == _normalizePath(pathLogin)
+            ? 'login'
+            : 'api';
+    final code = osErrorCode == null ? '' : ', os_error=$osErrorCode';
+    debugPrint('[Api] Network failure: method=$method, endpoint=$endpoint, '
+        'category=$category$code');
+    return FetchDataException(noInternet, method == 'GET');
+  }
+
   // Future<dynamic> get(String url) async {
   //   print('Api Get, url $url');
   //   var responseJson;
@@ -110,9 +140,11 @@ class ApiBaseHelper {
       var url = createUrl(path);
       final response = await client.get(url, headers: headers);
       responseJson = _returnResponse(response);
-    } on SocketException {
-      _logDebug('No net');
-      throw FetchDataException(noInternet);
+    } on SocketException catch (error) {
+      throw _networkError('GET', path, 'socket',
+          osErrorCode: error.osError?.errorCode);
+    } on http.ClientException catch (error) {
+      throw _networkError('GET', path, _clientErrorCategory(error));
     } on NoSuchMethodError catch (e) {
       _logDebug(e.toString());
       throw FetchDataException("El servidor rebutja la petició");
@@ -130,9 +162,13 @@ class ApiBaseHelper {
           await client.post(url, body: jsonEncode(body), headers: headers);
       var responseJson = _returnResponse(response);
       return responseJson;
-    } on SocketException {
-      _logDebug('No net');
-      throw FetchDataException(noInternet);
+    } on SocketException catch (error) {
+      throw _networkError('POST', path, 'socket',
+          osErrorCode: error.osError?.errorCode);
+    } on http.ClientException catch (error) {
+      throw _networkError('POST', path, _clientErrorCategory(error));
+    } on FetchDataException catch (error) {
+      throw FetchDataException(error.message(), false);
     } on NoSuchMethodError catch (e) {
       _logDebug(e.toString());
       throw FetchDataException("El servidor rebutja la petició");
@@ -149,9 +185,11 @@ class ApiBaseHelper {
       }
       _returnResponse(response);
       throw FetchDataException('El servidor ha retornat una resposta invàlida');
-    } on SocketException {
-      _logDebug('No net');
-      throw FetchDataException(noInternet);
+    } on SocketException catch (error) {
+      throw _networkError('GET', path, 'socket',
+          osErrorCode: error.osError?.errorCode);
+    } on http.ClientException catch (error) {
+      throw _networkError('GET', path, _clientErrorCategory(error));
     } on NoSuchMethodError catch (e) {
       _logDebug(e.toString());
       throw FetchDataException("El servidor rebutja la petició");
